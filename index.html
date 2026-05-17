@@ -2,423 +2,633 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#c0392b">
+<meta name="theme-color" content="#b5001f" id="tc">
 <link rel="manifest" href="manifest.json">
-<title>🇯🇵 Japan Reise 2026</title>
+<title>🇯🇵 Japan 2026</title>
 <style>
 :root{
-  --bg:#faf8f5;--card:#fff;--border:#e8e0d8;
-  --text:#1a1a1a;--text2:#555;--text3:#888;--text4:#aaa;--text5:#999;
-  --hdr:#c0392b;--acc:#c0392b;
-  --intro-bg:#fdecea;--intro-text:#7a1f1f;
-  --tip-bg:#fffbf0;--tip-border:#f0d080;--tip-text:#5a4000;
-  --input-bg:#f0ece8;--input-border:#d8d0c8;
-  --cd-pre-bg:#fff8e1;--cd-pre-text:#5a3e00;
-  --cd-act-bg:#e8f7ef;--cd-act-text:#1a5e30;
-  --prog-bg:rgba(255,255,255,.3);--prog-fill:#fff;
+  --bg:#f5f2ef;--bg2:#ede9e4;--card:#fff;--card2:#faf8f6;
+  --border:rgba(0,0,0,.08);--shadow:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --text:#111;--text2:#444;--text3:#777;--text4:#aaa;
+  --acc:#b5001f;--acc2:#d4002b;--acc-light:#fdeced;
+  --hdr:#b5001f;--nav-bg:#fff;--nav-border:rgba(0,0,0,.1);
+  --input-bg:#f0ece8;--input-border:#ddd;
+  --tip-bg:#fffbf0;--tip-border:#e8d57a;--tip-text:#4a3400;
+  --tag-hi-bg:#fce4ec;--tag-hi-c:#880e4f;
+  --tag-free-bg:#e8f5e9;--tag-free-c:#2e7d32;
+  --tag-pay-bg:#fff3e0;--tag-pay-c:#bf360c;
+  --tag-eve-bg:#ede7f6;--tag-eve-c:#4527a0;
+  --tag-ex-bg:#e3f2fd;--tag-ex-c:#0d47a1;
+  --safe-bottom:env(safe-area-inset-bottom,16px);
 }
-[data-theme="dark"]{
-  --bg:#111;--card:#1e1e1e;--border:#333;
-  --text:#e8e6e3;--text2:#b0aca6;--text3:#777;--text4:#555;--text5:#666;
-  --hdr:#8b2318;--acc:#e05548;
-  --intro-bg:#2a1818;--intro-text:#f0b0b0;
-  --tip-bg:#1a1500;--tip-border:#4a3800;--tip-text:#c8a840;
-  --input-bg:#2a2626;--input-border:#444;
-  --cd-pre-bg:#2a2000;--cd-pre-text:#d4a840;
-  --cd-act-bg:#0a2010;--cd-act-text:#60c880;
-  --prog-bg:rgba(255,255,255,.15);--prog-fill:rgba(255,255,255,.9);
+[data-dark]{
+  --bg:#0e0e0e;--bg2:#171717;--card:#1c1c1c;--card2:#222;
+  --border:rgba(255,255,255,.08);--shadow:0 1px 4px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.3);
+  --text:#f0ede8;--text2:#b0ada8;--text3:#666;--text4:#444;
+  --acc:#e84060;--acc2:#ff4d6a;--acc-light:#2a0a10;
+  --hdr:#7a0015;--nav-bg:#1c1c1c;--nav-border:rgba(255,255,255,.1);
+  --input-bg:#252020;--input-border:#3a3030;
+  --tip-bg:#1a1600;--tip-border:#3a2e00;--tip-text:#c8a840;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;transition:background .25s,color .25s}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 
-/* Header */
-.hdr{background:var(--hdr);color:#fff;padding:12px 16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);transition:background .25s}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
-.hdr h1{font-size:18px;font-weight:700}
-.hdr-sub{font-size:11px;opacity:.8;margin-bottom:8px}
-.dm-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:20px;padding:4px 10px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1}
+/* ── Header ── */
+.hdr{background:var(--hdr);color:#fff;padding:14px 16px 0;position:sticky;top:0;z-index:90;transition:background .2s}
+.hdr-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.hdr-title{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.hdr-sub{font-size:11px;opacity:.75;margin-bottom:8px}
+.dm-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:18px;padding:4px 10px;font-size:14px;cursor:pointer;font-family:inherit}
 
-/* Countdown */
-.cd{font-size:12px;border-radius:8px;padding:7px 11px;margin-bottom:10px;line-height:1.45}
-.cd.pre{background:var(--cd-pre-bg);color:var(--cd-pre-text)}
-.cd.act{background:var(--cd-act-bg);color:var(--cd-act-text)}
-.cd.done{background:rgba(255,255,255,.15);color:rgba(255,255,255,.92)}
+/* ── Countdown ── */
+.cd{font-size:12px;font-weight:500;border-radius:8px;padding:6px 10px;margin-bottom:10px;line-height:1.4;transition:background .2s,color .2s}
+.cd.pre{background:rgba(255,255,255,.18);color:rgba(255,255,255,.95)}
+.cd.act{background:rgba(255,255,255,.22);color:#fff}
+.cd.done{background:rgba(255,255,255,.14);color:rgba(255,255,255,.8)}
 .cd strong{font-weight:700}
-.prog{height:4px;background:var(--prog-bg);border-radius:2px;margin-top:5px;overflow:hidden}
-.prog-fill{height:100%;background:var(--prog-fill);border-radius:2px}
+.prog{height:3px;background:rgba(255,255,255,.25);border-radius:2px;margin-top:5px;overflow:hidden}
+.prog-fill{height:100%;background:rgba(255,255,255,.85);border-radius:2px}
 
-/* Tabs */
-.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;flex-shrink:0;font-family:inherit}
-.tab.on{background:#fff;color:var(--acc);border-color:#fff}
+/* ── City tabs in header ── */
+.city-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.city-tabs::-webkit-scrollbar{display:none}
+.ctab{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92);border-radius:18px;padding:5px 12px;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;flex-shrink:0;font-family:inherit;transition:background .15s}
+.ctab.on{background:#fff;color:var(--acc);border-color:#fff}
 
-/* Wrap */
+/* ── Bottom Nav ── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--nav-bg);border-top:1px solid var(--nav-border);display:flex;padding-bottom:var(--safe-bottom);transition:background .2s,border-color .2s}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 0 4px;cursor:pointer;background:none;border:none;font-family:inherit;color:var(--text3);transition:color .15s;gap:2px}
+.nav-btn.on{color:var(--acc)}
+.nav-ico{font-size:22px;line-height:1}
+.nav-lbl{font-size:10px;font-weight:600}
+
+/* ── Content ── */
+.content{padding-bottom:calc(66px + var(--safe-bottom))}
+.view{display:none}
+.view.show{display:block}
 .wrap{max-width:480px;margin:0 auto;padding:16px 14px}
 
-/* Overview */
-.intro{background:var(--intro-bg);border-left:3px solid var(--acc);border-radius:0 8px 8px 0;padding:11px 14px;margin-bottom:16px;font-size:13px;color:var(--intro-text);line-height:1.55}
-.stop{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;overflow:hidden;display:flex;align-items:center;padding:14px;gap:12px;transition:background .25s,border-color .25s}
-.stop:active{transform:scale(.98)}
-.dot{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.stop-info{flex:1}
-.city-name{font-size:15px;font-weight:600}
-.city-dates{font-size:11px;color:var(--text3);margin-top:1px}
-.city-hotel{font-size:11px;color:var(--text4);margin-top:1px}
-.nights{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap}
-.transfer{display:flex;align-items:center;gap:8px;padding:3px 0 8px 8px}
-.transfer span{font-size:11px;color:var(--text5)}
+/* ── Overview ── */
+.intro-banner{background:var(--acc-light);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;padding:11px 14px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.5}
+[data-dark] .intro-banner{color:var(--text2)}
+.city-card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:10px;cursor:pointer;overflow:hidden;display:flex;align-items:center;padding:14px 14px;gap:12px;box-shadow:var(--shadow);transition:transform .1s,background .2s}
+.city-card:active{transform:scale(.98)}
+.city-dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.city-info{flex:1;min-width:0}
+.city-name{font-size:15px;font-weight:700}
+.city-dates{font-size:11px;color:var(--text3);margin-top:2px}
+.city-hotel{font-size:11px;color:var(--text4);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.city-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:18px;white-space:nowrap;flex-shrink:0}
+.transit-row{display:flex;align-items:flex-start;gap:8px;padding:2px 0 8px 16px}
+.transit-line{width:1px;height:18px;background:var(--border);margin-right:4px;flex-shrink:0;margin-top:2px}
+.transit-text{font-size:11px;color:var(--text3);line-height:1.5}
 
-/* City detail */
-.back{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--acc);font-weight:500;cursor:pointer;padding:6px 0 14px}
-.hero{border-radius:12px;padding:18px;margin-bottom:16px;color:#fff}
-.hero-emoji{font-size:34px;margin-bottom:8px}
-.hero-name{font-size:24px;font-weight:700}
-.hero-sub{font-size:12px;opacity:.85;margin-top:2px}
-.hero-dates{font-size:13px;opacity:.9;margin-top:6px}
-.hero-hotel{font-size:12px;opacity:.75;margin-top:5px}
-.sec-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text5);margin-bottom:8px}
-.sec{margin-bottom:18px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;transition:background .25s,border-color .25s}
-.card-name{font-size:14px;font-weight:600;margin-bottom:3px}
-.card-desc{font-size:12px;color:var(--text2);line-height:1.55}
-.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
-.tip{background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--tip-text);line-height:1.55;margin-bottom:8px;transition:background .25s,border-color .25s}
+/* ── City Detail ── */
+.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--acc);font-weight:600;cursor:pointer;padding:6px 0 12px}
+.city-hero{border-radius:14px;padding:20px 18px;margin-bottom:16px;color:#fff}
+.hero-emoji{font-size:36px;margin-bottom:8px}
+.hero-name{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.hero-sub{font-size:12px;opacity:.85;margin-top:3px}
+.hero-dates{font-size:13px;opacity:.9;margin-top:7px;font-weight:500}
+.hero-hotel{font-size:12px;opacity:.72;margin-top:5px}
+.sec-hd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px}
+.sec{margin-bottom:20px}
+.att-card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:background .2s}
+.att-name{font-size:14px;font-weight:700;margin-bottom:3px}
+.att-desc{font-size:12px;color:var(--text2);line-height:1.6}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tip-card{background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--tip-text);line-height:1.6;margin-bottom:8px;transition:background .2s,border-color .2s}
+.transit-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.6;transition:background .2s}
 
-/* Info */
-.info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;transition:background .25s,border-color .25s}
-.info-title{font-size:14px;font-weight:600;margin-bottom:10px}
+/* ── Currency ── */
+.cur-wrap{max-width:480px;margin:0 auto;padding:16px 14px}
+.page-hd{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:2px}
+.page-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+.cur-main{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:18px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.cur-field{margin-bottom:12px}
+.cur-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:5px}
+.cur-input-wrap{display:flex;align-items:center;background:var(--input-bg);border:1.5px solid transparent;border-radius:12px;padding:10px 14px;gap:8px;transition:border-color .2s}
+.cur-input-wrap:focus-within{border-color:var(--acc)}
+.cur-flag{font-size:20px;line-height:1;flex-shrink:0}
+.cur-input{flex:1;background:none;border:none;font-size:22px;font-weight:700;color:var(--text);font-family:inherit;outline:none;width:100%;min-width:0}
+.cur-code{font-size:13px;font-weight:700;color:var(--text3);flex-shrink:0}
+.cur-swap-btn{display:flex;align-items:center;justify-content:center;margin:6px auto;width:36px;height:36px;background:var(--acc-light);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:16px;color:var(--acc);transition:transform .2s}
+.cur-swap-btn:active{transform:rotate(180deg) scale(.9)}
+.quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.quick-btn{flex:1;min-width:60px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 4px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:center;transition:background .15s,transform .1s}
+.quick-btn:active{transform:scale(.95)}
+.ref-card{background:var(--card);border-radius:14px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.ref-hd{padding:12px 14px 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+.ref-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--border)}
+.ref-label{font-size:13px;color:var(--text2)}
+.ref-val{font-size:13px;font-weight:700;color:var(--acc)}
+
+/* ── Phrases ── */
+.ph-wrap{max-width:480px;margin:0 auto;padding:16px 14px}
+.search-wrap{position:relative;margin-bottom:14px}
+.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3);pointer-events:none}
+.search-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:11px 12px 11px 38px;font-size:14px;color:var(--text);font-family:inherit;outline:none;box-shadow:var(--shadow);transition:border-color .2s}
+.search-inp:focus{border-color:var(--acc)}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:var(--bg2);border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;color:var(--text3);display:none;align-items:center;justify-content:center}
+.ph-cat-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:16px 0 8px}
+.ph-cat-hd:first-child{margin-top:0}
+.ph-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:background .2s}
+.ph-texts{flex:1;min-width:0}
+.ph-de{font-size:13px;font-weight:600;margin-bottom:4px}
+.ph-jp{font-size:18px;line-height:1.4;margin-bottom:3px}
+.ph-rm{font-size:11px;color:var(--text3);font-style:italic}
+.ph-actions{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.play-btn{width:36px;height:36px;border-radius:50%;background:var(--acc-light);border:1px solid rgba(0,0,0,.08);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--acc);transition:background .15s,transform .1s;flex-shrink:0}
+.play-btn:active{transform:scale(.9)}
+.play-btn.playing{background:var(--acc);color:#fff;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.copy-btn{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text3);transition:background .15s}
+.copy-btn.copied{background:var(--tag-free-bg);color:var(--tag-free-c)}
+.no-results{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
+
+/* ── Info ── */
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);transition:background .2s}
+.info-title{font-size:14px;font-weight:700;margin-bottom:10px}
 .info-list{list-style:none}
 .info-list li{font-size:12px;color:var(--text2);line-height:2;display:flex;gap:6px}
 .info-list li::before{content:"→";color:var(--acc);flex-shrink:0}
 
-/* Currency */
-.page-title{font-size:17px;font-weight:700;margin-bottom:4px}
-.page-sub{font-size:12px;color:var(--text3);margin-bottom:14px}
-.cur-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
-.cur-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.cur-label{font-size:13px;font-weight:700;width:48px;flex-shrink:0;color:var(--text)}
-.cur-input{flex:1;background:var(--input-bg);border:1.5px solid var(--input-border);border-radius:8px;padding:10px 12px;font-size:20px;font-weight:600;color:var(--text);font-family:inherit;outline:none;width:100%;transition:border-color .2s}
-.cur-input:focus{border-color:var(--acc)}
-.cur-swap{text-align:center;color:var(--text3);font-size:20px;margin:2px 0 10px}
-.quick-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.quick-btn{background:var(--intro-bg);color:var(--acc);border:1px solid var(--border);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-.quick-btn:active{transform:scale(.96)}
-.ref-section{margin-top:6px}
-.ref-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:8px;font-size:12px;color:var(--text)}
-.ref-row:nth-child(odd){background:var(--card);border:1px solid var(--border)}
-.ref-row span:last-child{color:var(--acc);font-weight:600;font-size:11px}
-
-/* Phrases */
-.ph-cat{margin-bottom:20px}
-.ph-cat-title{font-size:11px;font-weight:700;color:var(--text5);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
-.ph-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:6px;cursor:pointer;position:relative;transition:background .25s}
-.ph-card:active{transform:scale(.98)}
-.ph-de{font-size:13px;font-weight:600;margin-bottom:4px}
-.ph-jp{font-size:17px;margin-bottom:3px;line-height:1.4}
-.ph-rm{font-size:11px;color:var(--text3);font-style:italic}
-.ph-hint{font-size:10px;color:var(--text4);margin-top:4px}
-.copied{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:var(--acc);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s}
-.copied.show{opacity:1}
-
-.hidden{display:none}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
-<div class="hdr">
-  <div class="hdr-top">
-    <h1>🇯🇵 Japan Reise</h1>
-    <button class="dm-btn" onclick="toggleDM()" id="dm-btn">🌙</button>
+
+<!-- Header -->
+<div class="hdr" id="hdr">
+  <div class="hdr-row1">
+    <span class="hdr-title">🇯🇵 Japan 2026</span>
+    <button class="dm-btn" id="dm-btn" onclick="toggleDM()">🌙</button>
   </div>
-  <div class="hdr-sub">20. Juli – 5. August 2026 · 6 Stationen</div>
+  <div class="hdr-sub">20. Juli – 5. August · 6 Stationen</div>
   <div id="cd" class="cd pre"></div>
-  <div class="tabs" id="tabs"></div>
+  <div id="city-tabs-bar" class="city-tabs hidden"></div>
 </div>
-<div class="wrap">
-  <div id="vov"></div>
-  <div id="vci" class="hidden"></div>
-  <div id="vin" class="hidden"></div>
-  <div id="vcr" class="hidden"></div>
-  <div id="vph" class="hidden"></div>
+
+<!-- Content -->
+<div class="content">
+  <!-- Reise View -->
+  <div class="view show" id="v-reise">
+    <div id="v-ov" class="wrap"></div>
+    <div id="v-ci" class="wrap hidden"></div>
+  </div>
+
+  <!-- Währung View -->
+  <div class="view" id="v-cur">
+    <div class="cur-wrap">
+      <div class="page-hd">💴 Währungsrechner</div>
+      <div class="page-sub">CHF ↔ JPY · Richtwert 2026</div>
+      <div class="cur-main">
+        <div class="cur-field">
+          <div class="cur-label">Schweizer Franken</div>
+          <div class="cur-input-wrap">
+            <span class="cur-flag">🇨🇭</span>
+            <input class="cur-input" id="chf-i" type="number" placeholder="0" inputmode="decimal" oninput="cvCHF()">
+            <span class="cur-code">CHF</span>
+          </div>
+        </div>
+        <button class="cur-swap-btn" onclick="swapCur()" title="Tauschen">⇅</button>
+        <div class="cur-field">
+          <div class="cur-label">Japanischer Yen</div>
+          <div class="cur-input-wrap">
+            <span class="cur-flag">🇯🇵</span>
+            <input class="cur-input" id="jpy-i" type="number" placeholder="0" inputmode="decimal" oninput="cvJPY()">
+            <span class="cur-code">JPY</span>
+          </div>
+        </div>
+        <div class="quick-row" id="quick-row"></div>
+      </div>
+      <div class="ref-card" id="ref-card"></div>
+    </div>
+  </div>
+
+  <!-- Phrasen View -->
+  <div class="view" id="v-ph">
+    <div class="ph-wrap">
+      <div class="page-hd">🗣️ Phrasen</div>
+      <div class="page-sub" style="margin-bottom:12px">Tippen zum Abspielen · Langes Tippen zum Kopieren</div>
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input class="search-inp" id="search-inp" type="search" placeholder="Suchen auf Deutsch, 日本語 oder Romaji…" oninput="filterPh()" onsearch="filterPh()">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+      </div>
+      <div id="ph-list"></div>
+    </div>
+  </div>
+
+  <!-- Info View -->
+  <div class="view" id="v-info">
+    <div class="wrap" id="v-info-content"></div>
+  </div>
 </div>
+
+<!-- Bottom Nav -->
+<nav class="nav">
+  <button class="nav-btn on" id="nb-reise" onclick="showMain('reise')">
+    <span class="nav-ico">🗺️</span>
+    <span class="nav-lbl">Reise</span>
+  </button>
+  <button class="nav-btn" id="nb-cur" onclick="showMain('cur')">
+    <span class="nav-ico">💴</span>
+    <span class="nav-lbl">Währung</span>
+  </button>
+  <button class="nav-btn" id="nb-ph" onclick="showMain('ph')">
+    <span class="nav-ico">🗣️</span>
+    <span class="nav-lbl">Phrasen</span>
+  </button>
+  <button class="nav-btn" id="nb-info" onclick="showMain('info')">
+    <span class="nav-ico">ℹ️</span>
+    <span class="nav-lbl">Infos</span>
+  </button>
+</nav>
+
 <script>
-// Dark Mode
-var dm=localStorage.getItem('dm')==='1';
-function applyDM(){document.documentElement.setAttribute('data-theme',dm?'dark':'');document.getElementById('dm-btn').textContent=dm?'☀️':'🌙';}
-function toggleDM(){dm=!dm;localStorage.setItem('dm',dm?'1':'0');applyDM();}
+// ─── Dark Mode ───────────────────────────────────────────────────────────────
+var dm = localStorage.getItem('dm') === '1';
+function applyDM() {
+  document.documentElement.toggleAttribute('data-dark', dm);
+  document.getElementById('dm-btn').textContent = dm ? '☀️' : '🌙';
+  document.getElementById('tc').content = dm ? '#7a0015' : '#b5001f';
+}
+function toggleDM() { dm = !dm; localStorage.setItem('dm', dm ? '1' : '0'); applyDM(); }
 applyDM();
 
-// Countdown
-(function(){
-  var s=new Date('2026-07-20T00:00:00'),e=new Date('2026-08-06T00:00:00'),n=new Date(),el=document.getElementById('cd');
-  if(n<s){var d=Math.ceil((s-n)/864e5);el.innerHTML='🗓️ Noch <strong>'+d+' Tag'+(d===1?'':'e')+'</strong> bis zur Abreise!';el.className='cd pre';}
-  else if(n<e){var day=Math.floor((n-s)/864e5)+1,pct=Math.round(day/16*100);el.innerHTML='✈️ Du bist in Japan – <strong>Tag '+day+'</strong> von 16<div class="prog"><div class="prog-fill" style="width:'+pct+'%"></div></div>';el.className='cd act';}
-  else{el.innerHTML='🎌 Tolle Erinnerungen aus Japan!';el.className='cd done';}
+// ─── Countdown ───────────────────────────────────────────────────────────────
+(function () {
+  var s = new Date('2026-07-20T00:00:00'), e = new Date('2026-08-06T00:00:00'), n = new Date();
+  var el = document.getElementById('cd');
+  if (n < s) {
+    var d = Math.ceil((s - n) / 864e5);
+    el.innerHTML = '🗓️ Noch <strong>' + d + ' Tag' + (d === 1 ? '' : 'e') + '</strong> bis zur Abreise';
+    el.className = 'cd pre';
+  } else if (n < e) {
+    var day = Math.floor((n - s) / 864e5) + 1, pct = Math.round(day / 16 * 100);
+    el.innerHTML = '✈️ <strong>Tag ' + day + '</strong> von 16 – Du bist in Japan!<div class="prog"><div class="prog-fill" style="width:' + pct + '%"></div></div>';
+    el.className = 'cd act';
+  } else {
+    el.innerHTML = '🎌 Tolle Erinnerungen aus Japan!';
+    el.className = 'cd done';
+  }
 })();
 
-// Data
-var C=[
-{k:"tokyo",e:"🗼",n:"Tokyo",s:"Ginza · Shibuya · Shinjuku",d:"20. – 25. Juli",ni:"5 Nächte",h:"Quintessa Hotel Tokyo Ginza",col:"#1a6fa8",cl:"#e8f4fd",ti:null,
-nt:"🚆 Odakyu Romancecar ab Shinjuku → Hakone (~85 Min., ca. 2.500 ¥)",
-a:[
-{n:"Shibuya Scramble Crossing",d:"Bis zu 3.000 Menschen gleichzeitig – einmalig. Tagsüber UND abends erleben – der Kontrast ist riesig!",t:["★ Highlight","Kostenlos"]},
-{n:"Shibuya Sky Observatorium",d:"237m hoch, beste 360°-Aussicht über Tokyo. Bei Sonnenuntergang Fuji-Sicht möglich.",t:["★ Highlight","Ticket","Vorab buchen!"]},
-{n:"Meiji-Jingu Schrein",d:"Ruhiger Shinto-Schrein in 70 ha Wald. Perfekter Kontrast zum Stadtlärm. Morgens besuchen!",t:["Kostenlos"]},
-{n:"Senso-ji Tempel (Asakusa)",d:"Ältester Tempel Tokyos mit großem Torii-Tor. Früh morgens am ruhigsten.",t:["★ Highlight","Kostenlos"]},
-{n:"Hachiko-Statue",d:"Bronzehund vor dem Shibuya Bahnhof – Symbol für Treue. Klassisches Foto.",t:["Kostenlos"]},
-{n:"Shinjuku – Golden Gai",d:"6 enge Gassen, 200+ Mini-Bars. Retrocharme pur. Nach englischen Schildern Ausschau halten. Cover 400–1.000 ¥.",t:["Abends"]},
-{n:"Shinjuku – Kabukicho",d:"Neonlichtviertel mit Godzilla-Kopf (Hotel Gracery) – stündliche Show 12–20 Uhr.",t:["Kostenlos","Abends"]},
-{n:"Omoide Yokocho (Memory Lane)",d:"Enge Gassen mit winzigen Yakitori-Restaurants am Shinjuku Bahnhof. Perfekt fürs Abendessen!",t:["Abends"]},
-{n:"Shinjuku Gyoen Garten",d:"Japanische, englische und französische Gärten vereint. Ruhige Oase in Shinjuku. Eintritt 500 ¥.",t:["Ticket"]}
-],
-tp:["Shibuya Sky: Tickets UNBEDINGT vorab online buchen – oft Tage vorher ausverkauft!","Shibuya & Shinjuku: nur 7 Min. mit der Yamanote-Linie – gute Tageskombi","Harajuku liegt dazwischen: Takeshita Str. (Kawaii) und Omotesando (Luxus)"]},
+// ─── Data ────────────────────────────────────────────────────────────────────
+var C = [
+  { k: 'tokyo', e: '🗼', n: 'Tokyo', s: 'Ginza · Shibuya · Shinjuku', d: '20. – 25. Juli', ni: '5 Nächte', h: 'Quintessa Hotel Tokyo Ginza', col: '#1a6fa8', cl: '#d6eaf8', ti: null, nt: '🚆 Odakyu Romancecar ab Shinjuku → Hakone (~85 Min., ca. 2.500 ¥)', a: [
+    { n: 'Shibuya Scramble Crossing', d: 'Bis zu 3.000 Menschen gleichzeitig – einmalig. Tagsüber UND abends erleben – der Kontrast ist riesig!', t: ['★', '0¥'] },
+    { n: 'Shibuya Sky Observatorium', d: '237m hoch, beste 360°-Aussicht über Tokyo. Bei Sonnenuntergang Fuji-Sicht möglich.', t: ['★', '🎟', '📅'] },
+    { n: 'Meiji-Jingu Schrein', d: 'Ruhiger Shinto-Schrein in 70 ha Wald. Perfekter Kontrast zum Stadtlärm. Morgens besuchen!', t: ['0¥'] },
+    { n: 'Senso-ji Tempel (Asakusa)', d: 'Ältester Tempel Tokyos mit großem Torii-Tor. Früh morgens am ruhigsten.', t: ['★', '0¥'] },
+    { n: 'Hachiko-Statue', d: 'Bronzehund vor dem Shibuya Bahnhof – Symbol für Treue. Klassisches Foto.', t: ['0¥'] },
+    { n: 'Shinjuku – Golden Gai', d: '6 enge Gassen, 200+ Mini-Bars. Retrocharme pur. Cover 400–1.000 ¥.', t: ['🌙'] },
+    { n: 'Shinjuku – Kabukicho', d: 'Neonlichtviertel mit Godzilla-Kopf (Hotel Gracery) – stündliche Show 12–20 Uhr.', t: ['0¥', '🌙'] },
+    { n: 'Omoide Yokocho (Memory Lane)', d: 'Enge Gassen mit winzigen Yakitori-Restaurants am Shinjuku Bahnhof. Perfekt fürs Abendessen!', t: ['🌙'] },
+    { n: 'Shinjuku Gyoen Garten', d: 'Japanische, englische und französische Gärten vereint. Ruhige Oase. Eintritt 500 ¥.', t: ['🎟'] }
+  ], tp: ['Shibuya Sky: Tickets UNBEDINGT vorab online buchen – oft Tage vorher ausverkauft!', 'Shibuya & Shinjuku: nur 7 Min. mit der Yamanote-Linie – gute Tageskombi', 'Harajuku liegt dazwischen: Takeshita Str. (Kawaii) und Omotesando (Luxus)'] },
 
-{k:"hakone",e:"⛰️",n:"Hakone",s:"Fuji-Hakone-Izu Nationalpark",d:"25. – 26. Juli",ni:"1 Nacht",h:"Guesthouse Azito",col:"#2a8a5e",cl:"#e8f7f0",
-ti:"🚆 Odakyu Romancecar ab Shinjuku: ~85 Min., ca. 2.500 ¥",
-nt:"🚆 Hakone → Odawara → Shinkansen → Kanazawa (~3.5h, JR Pass gültig)",
-a:[
-{n:"Fuji-Ausblick",d:"Beste Chancen von Owakudani oder Hakone-en am See. Im Sommer oft Wolken – morgens früh ist am besten!",t:["★ Highlight","Kostenlos"]},
-{n:"Hakone Seilbahn (Ropeway)",d:"Fahrt über das Vulkangebiet Owakudani mit aktiven Schwefelquellen. Spektakuläre Bergkulisse.",t:["Ticket"]},
-{n:"Ashi-See Bootsfahrt",d:"Bootsfahrt über den See mit Fuji-Kulisse. Bei klarem Wetter unvergesslich.",t:["Ticket"]},
-{n:"Onsen-Erlebnis",d:"Hakone ist Onsen-Hochburg Japans. Viele Hotels bieten Tagesnutzung an. Tattoos vorab anfragen.",t:["★ Highlight"]},
-{n:"Hakone Open Air Museum",d:"Weitläufiges Freilichtmuseum mit Picasso-Sammlung und Skulpturen in Bergkulisse.",t:["Ticket"]}
-],
-tp:["Hakone Free Pass (~5.500 ¥ ab Odawara) deckt Seilbahn, Bus und Schiff ab – lohnt sich!","Fuji ist wetterabhängig – Morgen hat die besten Chancen","Onsen-Etikette: komplett nackt, vorher gründlich waschen, kein Schwimmen"]},
+  { k: 'hakone', e: '⛰️', n: 'Hakone', s: 'Fuji-Hakone-Izu Nationalpark', d: '25. – 26. Juli', ni: '1 Nacht', h: 'Guesthouse Azito', col: '#2a8a5e', cl: '#d5efe6', ti: '🚆 Odakyu Romancecar ab Shinjuku: ~85 Min., ca. 2.500 ¥', nt: '🚆 Hakone → Odawara → Shinkansen → Kanazawa (~3.5h, JR Pass)', a: [
+    { n: 'Fuji-Ausblick', d: 'Beste Chancen von Owakudani oder Hakone-en am See. Morgens früh ist am besten!', t: ['★', '0¥'] },
+    { n: 'Hakone Seilbahn (Ropeway)', d: 'Fahrt über das Vulkangebiet Owakudani mit aktiven Schwefelquellen.', t: ['🎟'] },
+    { n: 'Ashi-See Bootsfahrt', d: 'Bootsfahrt über den See mit Fuji-Kulisse. Bei klarem Wetter unvergesslich.', t: ['🎟'] },
+    { n: 'Onsen-Erlebnis', d: 'Hakone ist Onsen-Hochburg Japans. Viele Hotels bieten Tagesnutzung an.', t: ['★'] },
+    { n: 'Hakone Open Air Museum', d: 'Weitläufiges Freilichtmuseum mit Picasso-Sammlung und Skulpturen in Bergkulisse.', t: ['🎟'] }
+  ], tp: ['Hakone Free Pass (~5.500 ¥ ab Odawara) deckt Seilbahn, Bus und Schiff ab', 'Fuji ist wetterabhängig – Morgen hat die besten Chancen', 'Onsen-Etikette: komplett nackt, vorher gründlich waschen, kein Schwimmen'] },
 
-{k:"kanazawa",e:"🏯",n:"Kanazawa",s:"Das Kyoto des Nordens",d:"26. – 28. Juli",ni:"2 Nächte",h:"HAOSTAY Hotel",col:"#b07d1a",cl:"#fdf6e3",
-ti:"🚆 Shinkansen ab Odawara/Nagoya → Kanazawa (~3.5h, JR Pass gültig)",
-nt:"🚌 Bus oder Zug Kanazawa → Matsumoto (~2.5–3h)",
-a:[
-{n:"Kenroku-en Garten",d:"Einer der drei schönsten Gärten Japans. Teehaus, Teiche, alte Kiefern. Eintritt 320 ¥.",t:["★ Highlight","Ticket"]},
-{n:"Higashi Chaya (Geisha-Viertel)",d:"Gut erhaltenes altes Geisha-Viertel mit traditionellen Teehäusern. Morgens fast menschenleer!",t:["★ Highlight","Kostenlos"]},
-{n:"Kanazawa Burg",d:"Imposante Burg direkt neben dem Kenroku-en. Gut als Kombi-Besuch. Teile kostenlos.",t:["Kostenlos"]},
-{n:"Samurai-Viertel Nagamachi",d:"Authentisches Samurai-Wohnviertel mit Lehmwänden und Kanälen. Nomura Samurai Villa sehenswert.",t:["Ticket"]},
-{n:"Omicho Markt",d:"Lebhafter Frischemarkt mit Meeresfrüchten. Frühstück/Mittagessen – Sushi direkt vom Markt!",t:["★ Highlight","Kostenlos"]}
-],
-tp:["Kanazawa Machi Bus Tageskarte 500 ¥ – deckt alle wichtigen Spots ab","Goldblattprodukte sind Kanazawas Spezialität – einzigartige Souvenirs","Viel weniger Touristen als Kyoto – viele Highlights überraschend ruhig!"]},
+  { k: 'kanazawa', e: '🏯', n: 'Kanazawa', s: 'Das Kyoto des Nordens', d: '26. – 28. Juli', ni: '2 Nächte', h: 'HAOSTAY Hotel', col: '#b07d1a', cl: '#faebd7', ti: '🚆 Shinkansen → Kanazawa (~3.5h, JR Pass)', nt: '🚌 Bus oder Zug → Matsumoto (~2.5–3h)', a: [
+    { n: 'Kenroku-en Garten', d: 'Einer der drei schönsten Gärten Japans. Teehaus, Teiche, alte Kiefern. Eintritt 320 ¥.', t: ['★', '🎟'] },
+    { n: 'Higashi Chaya (Geisha-Viertel)', d: 'Gut erhaltenes altes Geisha-Viertel mit Teehäusern. Morgens fast menschenleer!', t: ['★', '0¥'] },
+    { n: 'Kanazawa Burg', d: 'Imposante Burg direkt neben dem Kenroku-en. Gut als Kombi-Besuch.', t: ['0¥'] },
+    { n: 'Samurai-Viertel Nagamachi', d: 'Authentisches Samurai-Wohnviertel mit Lehmwänden und Kanälen.', t: ['🎟'] },
+    { n: 'Omicho Markt', d: 'Lebhafter Frischemarkt mit Meeresfrüchten. Sushi direkt vom Markt!', t: ['★', '0¥'] }
+  ], tp: ['Kanazawa Machi Bus Tageskarte 500 ¥ – deckt alle wichtigen Spots ab', 'Goldblattprodukte sind Kanazawas Spezialität', 'Viel weniger Touristen als Kyoto!'] },
 
-{k:"matsumoto",e:"🏔️",n:"Matsumoto",s:"Tor zu den Japanischen Alpen",d:"28. – 30. Juli",ni:"2 Nächte",h:"Richmond Hotel Matsumoto",col:"#a03020",cl:"#fdf0ee",
-ti:"🚌 Bus oder Zug Kanazawa → Matsumoto (~2.5–3h)",
-nt:"🚆 Matsumoto → Nagoya (Shinano Exp., ~2h) → Kyoto (Shinkansen, ~35 Min.) · JR Pass gültig",
-a:[
-{n:"Matsumoto-jo (Burg)",d:"Die 'Krähenburg' – eine der am besten erhaltenen Originalburgen Japans. Schwarze Fassade. Eintritt 700 ¥.",t:["★ Highlight","Ticket"]},
-{n:"Kamikochi (Tagesausflug)",d:"Alpines Hochtal auf 1.500m. Keine Privatautos erlaubt. Bus ab Matsumoto – früh starten!",t:["★ Highlight","Ausflug"]},
-{n:"Nakamachi Straße",d:"Historische Kaufmannsstraße mit Edo-zeitlichen Lagerhäusern. Cafés, Kunstgalerien, Souvenirs.",t:["Kostenlos"]},
-{n:"Nawate Straße",d:"Charmante Einkaufsstraße am Fluss mit 'Frosch'-Thema. Lokale Spezialitäten.",t:["Kostenlos"]}
-],
-tp:["Kamikochi: Bus ab Matsumoto Alpenbahn ~2.800 ¥ Hin/Rückfahrt – früh losfahren!","Matsumoto Soba (Buchweizennudeln) ist die lokale Spezialität – unbedingt probieren!","Burg + Altstadt lassen sich bequem zu Fuß erkunden"]},
+  { k: 'matsumoto', e: '🏔️', n: 'Matsumoto', s: 'Tor zu den Japanischen Alpen', d: '28. – 30. Juli', ni: '2 Nächte', h: 'Richmond Hotel Matsumoto', col: '#a03020', cl: '#f2d7d5', ti: '🚌 Bus oder Zug Kanazawa → Matsumoto (~2.5–3h)', nt: '🚆 Matsumoto → Nagoya → Kyoto (JR Pass)', a: [
+    { n: 'Matsumoto-jo (Burg)', d: "Die 'Krähenburg' – eine der am besten erhaltenen Originalburgen Japans. Eintritt 700 ¥.", t: ['★', '🎟'] },
+    { n: 'Kamikochi (Tagesausflug)', d: 'Alpines Hochtal auf 1.500m. Keine Privatautos erlaubt. Früh starten!', t: ['★', '🚌'] },
+    { n: 'Nakamachi Straße', d: 'Historische Kaufmannsstraße mit Edo-zeitlichen Lagerhäusern.', t: ['0¥'] },
+    { n: 'Nawate Straße', d: "Charmante Einkaufsstraße am Fluss mit 'Frosch'-Thema.", t: ['0¥'] }
+  ], tp: ['Kamikochi: Bus ab Matsumoto Alpenbahn ~2.800 ¥ Hin/Rückfahrt – früh losfahren!', 'Matsumoto Soba (Buchweizennudeln) ist die lokale Spezialität', 'Burg + Altstadt lassen sich bequem zu Fuß erkunden'] },
 
-{k:"kyoto",e:"⛩️",n:"Kyoto",s:"Alte Kaiserstadt",d:"30. Juli – 3. August",ni:"4 Nächte",h:"Travelodge Kyoto Shijo Omiya",col:"#6b3fa0",cl:"#f4eefa",
-ti:"🚆 Matsumoto → Nagoya (Shinano Exp.) → Kyoto (Shinkansen) · JR Pass gültig",
-nt:"🚆 Hankyu Kyoto Line → Osaka (~45 Min., 410 ¥) ODER JR (~15 Min., 570 ¥)",
-a:[
-{n:"Fushimi Inari Taisha",d:"Tausende orangefarbene Torii-Tore den Berg hinauf. VOR 8 Uhr besuchen – dann noch ruhig!",t:["★ Highlight","Kostenlos"]},
-{n:"Arashiyama Bambushain",d:"Berühmter Bambuswald. Früh morgens (6–7 Uhr!) besuchen – tagsüber extrem voll.",t:["★ Highlight","Kostenlos"]},
-{n:"Kinkaku-ji (Goldener Pavillon)",d:"Ikonischer vergoldeter Tempel am Teich. UNESCO-Welterbe. Eintritt 500 ¥.",t:["★ Highlight","Ticket"]},
-{n:"Gion Viertel",d:"Historisches Geishaviertel. Abendspaziergang Hanamikoji-Straße für Maiko-Sichtungen.",t:["★ Highlight","Kostenlos"]},
-{n:"Nishiki Markt",d:"400 Jahre alter überdachter Markt – 'Kyotos Küche'. Probieren erlaubt!",t:["★ Highlight","Kostenlos"]},
-{n:"Kiyomizu-dera Tempel",d:"Spektakulärer Tempel auf Holzpfählen mit Ausblick über Kyoto. Eintritt 500 ¥.",t:["★ Highlight","Ticket"]},
-{n:"Philosopher's Path",d:"Malerischer Kanal-Spazierweg zwischen Tempeln. Entspannt & wunderschön.",t:["Kostenlos"]},
-{n:"Tagesausflug Nara",d:"45 Min. per Kintetsu-Bahn. Riesiger Bronzebuddha + freilaufende Rehe im Park!",t:["★ Highlight","Ausflug"]}
-],
-tp:["Kyoto Bus Tageskarte 700 ¥ – deckt fast alle Sehenswürdigkeiten ab","Fushimi Inari: VOR 8 Uhr! Danach extrem voll. Mondlicht-Aufstieg abends auch möglich","Nara: Kintetsu Nara Line (45 Min., 760 ¥) ist schneller als JR","Gion: Geikos/Maikos fotografieren ist okay – aber nicht verfolgen oder anfassen!"]},
+  { k: 'kyoto', e: '⛩️', n: 'Kyoto', s: 'Alte Kaiserstadt', d: '30. Juli – 3. Aug.', ni: '4 Nächte', h: 'Travelodge Kyoto Shijo Omiya', col: '#6b3fa0', cl: '#e8daef', ti: '🚆 Matsumoto → Nagoya → Kyoto (JR Pass)', nt: '🚆 Hankyu Kyoto Line → Osaka (~45 Min., 410 ¥)', a: [
+    { n: 'Fushimi Inari Taisha', d: 'Tausende orangefarbene Torii-Tore den Berg hinauf. VOR 8 Uhr besuchen!', t: ['★', '0¥'] },
+    { n: 'Arashiyama Bambushain', d: 'Berühmter Bambuswald. Früh morgens (6–7 Uhr!) besuchen.', t: ['★', '0¥'] },
+    { n: 'Kinkaku-ji (Goldener Pavillon)', d: 'Ikonischer vergoldeter Tempel am Teich. UNESCO-Welterbe. Eintritt 500 ¥.', t: ['★', '🎟'] },
+    { n: 'Gion Viertel', d: 'Historisches Geishaviertel. Abendspaziergang Hanamikoji für Maiko-Sichtungen.', t: ['★', '0¥'] },
+    { n: 'Nishiki Markt', d: "400 Jahre alter überdachter Markt – 'Kyotos Küche'. Probieren erlaubt!", t: ['★', '0¥'] },
+    { n: 'Kiyomizu-dera Tempel', d: 'Spektakulärer Tempel auf Holzpfählen mit Ausblick über Kyoto. Eintritt 500 ¥.', t: ['★', '🎟'] },
+    { n: "Philosopher's Path", d: 'Malerischer Kanal-Spazierweg zwischen Tempeln.', t: ['0¥'] },
+    { n: 'Tagesausflug Nara', d: '45 Min. per Kintetsu-Bahn. Riesiger Bronzebuddha + freilaufende Rehe!', t: ['★', '🚌'] }
+  ], tp: ['Kyoto Bus Tageskarte 700 ¥ – deckt fast alle Sehenswürdigkeiten ab', 'Fushimi Inari: VOR 8 Uhr! Mondlicht-Aufstieg abends auch möglich', 'Nara: Kintetsu Nara Line (45 Min., 760 ¥) ist schneller als JR'] },
 
-{k:"osaka",e:"🐙",n:"Osaka",s:"Japans Küchen-Hauptstadt",d:"3. – 5. August",ni:"2 Nächte",h:"APA Hotel & Resort Osaka Umeda Eki Tower",col:"#c0392b",cl:"#fdecea",
-ti:"🚆 Hankyu Kyoto Line (~45 Min., 410 ¥) ODER JR (~15 Min., 570 ¥)",
-nt:null,
-a:[
-{n:"Dotonbori",d:"Neon-Flussviertel mit riesigem Glico-Mann-Schild. Abends ein absolutes Muss!",t:["★ Highlight","Kostenlos","Abends"]},
-{n:"Takoyaki & Okonomiyaki",d:"Osakas Streetfood: Kraken-Bällchen und herzhafter Pfannkuchen. Dotonbori hat die Besten!",t:["★ Highlight"]},
-{n:"Kuromon Ichiba Markt",d:"600m langer Frischemarkt – 'Osakas Küche'. Frühstück direkt am Stand.",t:["★ Highlight","Kostenlos"]},
-{n:"Osaka-jo (Burg)",d:"Beeindruckende Burg im großen Parkgelände. Museum im Inneren, Park kostenlos.",t:["Ticket"]},
-{n:"Shinsekai & Tsutenkaku",d:"Retro-Viertel aus den 1920ern mit altem Turm. Authentisches Osaka-Flair.",t:[]},
-{n:"Umeda Sky Building",d:"'Floating Garden Observatory' in 170m Höhe. Abends besonders schön.",t:["Ticket","Abends"]}
-],
-tp:["In Osaka stehen die Leute RECHTS auf Rolltreppen – anders als in Tokyo/Kyoto!","Tagesausflug Kobe: 30 Min. per JR/Hankyu – Kobe-Rind, Kitano-Viertel, Hafen","Osaka Amazing Pass (1–2 Tage) deckt viele Attraktionen + ÖPNV ab"]}
+  { k: 'osaka', e: '🐙', n: 'Osaka', s: "Japans Küchen-Hauptstadt", d: '3. – 5. August', ni: '2 Nächte', h: 'APA Hotel Osaka Umeda Eki Tower', col: '#c0392b', cl: '#fadbd8', ti: '🚆 Hankyu Kyoto Line (~45 Min., 410 ¥)', nt: null, a: [
+    { n: 'Dotonbori', d: 'Neon-Flussviertel mit riesigem Glico-Mann-Schild. Abends ein absolutes Muss!', t: ['★', '0¥', '🌙'] },
+    { n: 'Takoyaki & Okonomiyaki', d: 'Osakas Streetfood: Kraken-Bällchen und herzhafter Pfannkuchen.', t: ['★'] },
+    { n: 'Kuromon Ichiba Markt', d: "600m langer Frischemarkt – 'Osakas Küche'. Frühstück direkt am Stand.", t: ['★', '0¥'] },
+    { n: 'Osaka-jo (Burg)', d: 'Beeindruckende Burg im großen Parkgelände. Park kostenlos.', t: ['🎟'] },
+    { n: 'Shinsekai & Tsutenkaku', d: 'Retro-Viertel aus den 1920ern. Authentisches Osaka-Flair.', t: [] },
+    { n: 'Umeda Sky Building', d: "'Floating Garden Observatory' in 170m Höhe. Abends besonders schön.", t: ['🎟', '🌙'] }
+  ], tp: ['In Osaka stehen die Leute RECHTS auf Rolltreppen – anders als in Tokyo/Kyoto!', 'Tagesausflug Kobe: 30 Min. per JR/Hankyu – Kobe-Rind, Kitano-Viertel, Hafen', 'Osaka Amazing Pass (1–2 Tage) deckt viele Attraktionen + ÖPNV ab'] }
 ];
 
-var TS={"★ Highlight":{b:"#fce4ec",c:"#880e4f"},Kostenlos:{b:"#e8f5e9",c:"#2e7d32"},Ticket:{b:"#fff3e0",c:"#bf360c"},Abends:{b:"#ede7f6",c:"#4527a0"},Ausflug:{b:"#e3f2fd",c:"#0d47a1"},"Vorab buchen!":{b:"#fff8e1",c:"#f57f17"}};
+var TAGS = {
+  '★': { bg: '#fce4ec', c: '#880e4f', lbl: '★ Highlight' },
+  '0¥': { bg: '#e8f5e9', c: '#2e7d32', lbl: 'Kostenlos' },
+  '🎟': { bg: '#fff3e0', c: '#bf360c', lbl: 'Eintritt' },
+  '🌙': { bg: '#ede7f6', c: '#4527a0', lbl: 'Abends' },
+  '🚌': { bg: '#e3f2fd', c: '#0d47a1', lbl: 'Ausflug' },
+  '📅': { bg: '#fff8e1', c: '#f57f17', lbl: 'Vorab buchen' }
+};
 
-var INFO=[
-{i:"🚆",t:"JR Pass",l:["Vorab kaufen (7 oder 14 Tage)","Gilt für Shinkansen (außer Nozomi)","Am Flughafen oder großem Bahnhof aktivieren","Suica/Pasmo IC-Card extra für U-Bahn & Busse"]},
-{i:"💴",t:"Geld",l:["Japan ist überwiegend Bargeldgesellschaft!","7-Eleven / Post-ATM akzeptieren Visa/EC","Trinkgeld ist unüblich – nicht geben","IC-Card (Suica) laden für alle Züge & Busse"]},
-{i:"📱",t:"Internet unterwegs",l:["Pocket-WLAN oder SIM am Flughafen kaufen","Google Maps offline für alle Städte speichern","Google Translate App + JP-Paket offline laden"]},
-{i:"☀️",t:"Juli/August – Wetter",l:["Sehr heiß und humid: 32–36°C möglich","Leichte Kleidung + Sonnencreme Pflicht","Kühlsprays & Handtücher überall kaufbar","Beliebte Orte früh morgens besuchen!"]},
-{i:"🎌",t:"Etikette",l:["Tempel: leise, respektvoll, Schuhe ausziehen","Links stehen auf Rolltreppen (Osaka: rechts!)","Kaum Mülleimer – Müll immer mitnehmen","Fotos in Tempeln: Schilder beachten"]},
-{i:"🆘",t:"Notfall",l:["Polizei: 110 · Feuerwehr/Notarzt: 119","Tourist Info Tokyo: +81-3-3201-3331","Deutsche Botschaft Tokyo: +81-3-5791-7700"]}
+var INFO = [
+  { i: '🚆', t: 'JR Pass', l: ['Vorab kaufen (7 oder 14 Tage)', 'Gilt für Shinkansen (außer Nozomi)', 'Am Flughafen oder großem Bahnhof aktivieren', 'Suica/Pasmo IC-Card extra für U-Bahn & Busse'] },
+  { i: '💴', t: 'Geld', l: ['Japan ist überwiegend Bargeldgesellschaft!', '7-Eleven / Post-ATM akzeptieren Maestro/Visa', 'Trinkgeld ist unüblich – nicht geben', 'IC-Card (Suica) laden für alle Züge & Busse'] },
+  { i: '📱', t: 'Internet unterwegs', l: ['Pocket-WLAN oder SIM am Flughafen kaufen', 'Google Maps offline für alle Städte speichern', 'Google Translate App + JP-Paket offline laden'] },
+  { i: '☀️', t: 'Juli/August – Wetter', l: ['Sehr heiß und humid: 32–36°C möglich', 'Leichte Kleidung + Sonnencreme Pflicht', 'Kühlsprays & Handtücher überall kaufbar', 'Beliebte Orte früh morgens besuchen!'] },
+  { i: '🎌', t: 'Etikette', l: ['Tempel: leise, respektvoll, Schuhe ausziehen', 'Links stehen auf Rolltreppen (Osaka: rechts!)', 'Kaum Mülleimer – Müll immer mitnehmen', 'Fotos in Tempeln: Schilder beachten'] },
+  { i: '🆘', t: 'Notfall', l: ['Polizei: 110 · Feuerwehr/Notarzt: 119', 'Tourist Info Tokyo: +81-3-3201-3331', 'Deutsche Botschaft Tokyo: +81-3-5791-7700'] }
 ];
 
-// View switching
-var VIEWS=['vov','vci','vin','vcr','vph'];
-function sv(v,ck){
-  VIEWS.forEach(function(id){document.getElementById(id).className=id===v?'':'hidden';});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-  if(ck){document.querySelectorAll('.tab[data-k="'+ck+'"]').forEach(function(t){t.classList.add('on');});}
-  else{var m={vov:'t-ov',vin:'t-in',vcr:'t-cr',vph:'t-ph'};if(m[v])document.getElementById(m[v]).classList.add('on');}
-  window.scrollTo(0,0);
-}
-
-// City detail
-function openCity(k){
-  var c=C.find(function(x){return x.k===k;});
-  var att=c.a.map(function(a){
-    var tg=a.t.map(function(t){var s=TS[t]||{b:'#eee',c:'#333'};return'<span class="tag" style="background:'+s.b+';color:'+s.c+'">'+t+'</span>';}).join('');
-    return'<div class="card"><div class="card-name">'+a.n+'</div><div class="card-desc">'+a.d+'</div>'+(tg?'<div class="tags">'+tg+'</div>':'')+'</div>';
-  }).join('');
-  var tips=c.tp.map(function(t){return'<div class="tip">💡 '+t+'</div>';}).join('');
-  var tin=c.ti?'<div class="sec"><div class="sec-title">🚆 Anreise</div><div class="card" style="font-size:13px;line-height:1.6">'+c.ti+'</div></div>':'';
-  var tout=c.nt?'<div class="sec"><div class="sec-title">🚆 Weiterreise</div><div class="card" style="font-size:13px;line-height:1.6">'+c.nt+'</div></div>':'';
-  document.getElementById('vci').innerHTML=
-    '<div class="back" onclick="sv(\'vov\')">← Zurück zur Übersicht</div>'+
-    '<div class="hero" style="background:'+c.col+'">'+
-    '<div class="hero-emoji">'+c.e+'</div>'+
-    '<div class="hero-name">'+c.n+'</div>'+
-    '<div class="hero-sub">'+c.s+'</div>'+
-    '<div class="hero-dates">'+c.d+' · '+c.ni+'</div>'+
-    '<div class="hero-hotel">🏨 '+c.h+'</div></div>'+
-    tin+
-    '<div class="sec"><div class="sec-title">⭐ Sehenswürdigkeiten</div>'+att+'</div>'+
-    '<div class="sec"><div class="sec-title">💡 Insider-Tipps</div>'+tips+'</div>'+
-    tout;
-  sv('vci',k);
-}
-
-// Build tabs
-(function(){
-  var el=document.getElementById('tabs');
-  var h='<button id="t-ov" class="tab on" onclick="sv(\'vov\')">Übersicht</button>';
-  C.forEach(function(c){h+='<button class="tab" data-k="'+c.k+'" onclick="openCity(\''+c.k+'\')">'+c.e+' '+c.n+'</button>';});
-  h+='<button id="t-in" class="tab" onclick="sv(\'vin\')">ℹ️ Infos</button>';
-  h+='<button id="t-cr" class="tab" onclick="sv(\'vcr\')">💴 Währung</button>';
-  h+='<button id="t-ph" class="tab" onclick="sv(\'vph\')">🗣️ Phrasen</button>';
-  el.innerHTML=h;
-})();
-
-// Build overview
-(function(){
-  var el=document.getElementById('vov');
-  var h='<div class="intro">Tippe auf eine Stadt für alle Details zu Sehenswürdigkeiten, Transfers und Tipps.</div>';
-  C.forEach(function(c){
-    if(c.ti){h+='<div class="transfer"><div style="width:1px;height:16px;background:var(--border);margin-left:12px;margin-right:8px"></div><span>'+c.ti+'</span></div>';}
-    h+='<div class="stop" onclick="openCity(\''+c.k+'\')">'+
-       '<div class="dot" style="background:'+c.cl+'">'+c.e+'</div>'+
-       '<div class="stop-info">'+
-       '<div class="city-name">'+c.n+'</div>'+
-       '<div class="city-dates">'+c.d+'</div>'+
-       '<div class="city-hotel">🏨 '+c.h+'</div>'+
-       '</div>'+
-       '<div class="nights" style="background:'+c.cl+';color:'+c.col+'">'+c.ni+'</div>'+
-       '</div>';
+// ─── Nav ─────────────────────────────────────────────────────────────────────
+var curMain = 'reise';
+function showMain(sec) {
+  ['reise', 'cur', 'ph', 'info'].forEach(function (s) {
+    document.getElementById('v-' + s).classList.toggle('show', s === sec);
+    document.getElementById('nb-' + s).classList.toggle('on', s === sec);
   });
-  el.innerHTML=h;
+  document.getElementById('city-tabs-bar').classList.toggle('hidden', sec !== 'reise');
+  curMain = sec;
+  window.scrollTo(0, 0);
+}
+
+// ─── City Tabs ────────────────────────────────────────────────────────────────
+(function () {
+  var bar = document.getElementById('city-tabs-bar');
+  var h = '<button class="ctab on" id="ct-ov" onclick="showOV()">Übersicht</button>';
+  C.forEach(function (c) { h += '<button class="ctab" id="ct-' + c.k + '" onclick="openCity(\'' + c.k + '\')">' + c.e + ' ' + c.n + '</button>'; });
+  bar.innerHTML = h;
+  bar.classList.remove('hidden');
 })();
 
-// Build info
-(function(){
-  var el=document.getElementById('vin');
-  el.innerHTML=INFO.map(function(b){
-    return'<div class="info-card"><div class="info-title">'+b.i+' '+b.t+'</div><ul class="info-list">'+
-    b.l.map(function(x){return'<li>'+x+'</li>';}).join('')+'</ul></div>';
-  }).join('');
+function showOV() {
+  document.getElementById('v-ov').classList.remove('hidden');
+  document.getElementById('v-ci').classList.add('hidden');
+  document.querySelectorAll('.ctab').forEach(function (t) { t.classList.remove('on'); });
+  document.getElementById('ct-ov').classList.add('on');
+  window.scrollTo(0, 0);
+}
+
+// ─── Overview ────────────────────────────────────────────────────────────────
+(function () {
+  var el = document.getElementById('v-ov');
+  var h = '<div class="intro-banner">Tippe auf eine Stadt für Details zu Sehenswürdigkeiten, Transfers und Tipps.</div>';
+  C.forEach(function (c) {
+    if (c.ti) {
+      h += '<div class="transit-row"><div class="transit-line"></div><div class="transit-text">' + c.ti + '</div></div>';
+    }
+    h += '<div class="city-card" onclick="openCity(\'' + c.k + '\')">' +
+      '<div class="city-dot" style="background:' + c.cl + '">' + c.e + '</div>' +
+      '<div class="city-info">' +
+      '<div class="city-name">' + c.n + '</div>' +
+      '<div class="city-dates">' + c.d + '</div>' +
+      '<div class="city-hotel">🏨 ' + c.h + '</div>' +
+      '</div>' +
+      '<div class="city-badge" style="background:' + c.cl + ';color:' + c.col + '">' + c.ni + '</div>' +
+      '</div>';
+  });
+  el.innerHTML = h;
 })();
 
-// Currency
-var RATE=161;
-(function(){
-  var refs=[[5,'Kaffee / Snack'],[10,'Ramen / Udon'],[15,'Sushi-Set'],[30,'Restaurant-Abend'],[50,'Aktivität / Museum'],[100,'Tages-Budget']];
-  var h='<div class="page-title">💴 Währungsrechner</div>'+
-    '<div class="page-sub">1 € ≈ '+RATE+' ¥ &nbsp;·&nbsp; Richtwert 2026</div>'+
-    '<div class="cur-card">'+
-      '<div class="cur-row"><span class="cur-label">EUR €</span><input class="cur-input" id="ei" type="number" placeholder="0" inputmode="decimal" oninput="cvE()"></div>'+
-      '<div class="cur-swap">⇅</div>'+
-      '<div class="cur-row"><span class="cur-label">JPY ¥</span><input class="cur-input" id="ji" type="number" placeholder="0" inputmode="decimal" oninput="cvJ()"></div>'+
-      '<div class="quick-btns">'+[10,50,100,500].map(function(e){return'<button class="quick-btn" onclick="qc('+e+')">'+e+'€</button>';}).join('')+'</div>'+
-    '</div>'+
-    '<div class="ref-section"><div class="sec-title">Typische Kosten</div>'+
-    refs.map(function(r){return'<div class="ref-row"><span>'+r[1]+'</span><span>~'+r[0]+'€ ≈ '+(r[0]*RATE).toLocaleString('de')+'¥</span></div>';}).join('')+
-    '</div>';
-  document.getElementById('vcr').innerHTML=h;
-})();
-function cvE(){var e=parseFloat(document.getElementById('ei').value);document.getElementById('ji').value=isNaN(e)?'':Math.round(e*RATE);}
-function cvJ(){var j=parseFloat(document.getElementById('ji').value);document.getElementById('ei').value=isNaN(j)?'':(j/RATE).toFixed(2);}
-function qc(e){document.getElementById('ei').value=e;document.getElementById('ji').value=Math.round(e*RATE);}
-
-// Phrases
-var PH=[
-{cat:'Begrüßung & Basics',ph:[
-  {de:'Danke schön',jp:'ありがとうございます',rm:'Arigatō gozaimasu'},
-  {de:'Bitte / Gern geschehen',jp:'どうぞ / どういたしまして',rm:'Dōzo / Dō itashimashite'},
-  {de:'Entschuldigung',jp:'すみません',rm:'Sumimasen'},
-  {de:'Guten Morgen',jp:'おはようございます',rm:'Ohayō gozaimasu'},
-  {de:'Auf Wiedersehen',jp:'さようなら',rm:'Sayōnara'},
-  {de:'Ja / Nein',jp:'はい / いいえ',rm:'Hai / Iie'},
-  {de:'Ich verstehe nicht',jp:'わかりません',rm:'Wakarimasen'},
-  {de:'Sprechen Sie Englisch?',jp:'英語を話せますか？',rm:'Eigo o hanasemasu ka?'},
-]},
-{cat:'Restaurant & Essen',ph:[
-  {de:'Guten Appetit (vor dem Essen)',jp:'いただきます',rm:'Itadakimasu'},
-  {de:'Das war lecker!',jp:'おいしかった！',rm:'Oishikatta!'},
-  {de:'Die Rechnung bitte',jp:'お会計をお願いします',rm:'Okaikei o onegaishimasu'},
-  {de:'Ein Tisch für zwei bitte',jp:'二人席をお願いします',rm:'Futari seki o onegaishimasu'},
-  {de:'Was empfehlen Sie?',jp:'おすすめは何ですか？',rm:'Osusume wa nan desu ka?'},
-  {de:'Ein Bier bitte',jp:'ビールを一つください',rm:'Bīru o hitotsu kudasai'},
-  {de:'Ohne Fleisch bitte',jp:'お肉なしでお願いします',rm:'Oniku nashi de onegaishimasu'},
-]},
-{cat:'Transport',ph:[
-  {de:'Wo ist der Bahnhof?',jp:'駅はどこですか？',rm:'Eki wa doko desu ka?'},
-  {de:'Eine Fahrkarte nach Tokyo',jp:'東京まで一枚ください',rm:'Tōkyō made ichimai kudasai'},
-  {de:'Zum Flughafen bitte',jp:'空港までお願いします',rm:'Kūkō made onegaishimasu'},
-  {de:'Hier aussteigen bitte',jp:'ここで降ります',rm:'Koko de orimasu'},
-  {de:'Welches ist der nächste Zug?',jp:'次の電車はいつですか？',rm:'Tsugi no densha wa itsu desu ka?'},
-]},
-{cat:'Shopping',ph:[
-  {de:'Wie viel kostet das?',jp:'これはいくらですか？',rm:'Kore wa ikura desu ka?'},
-  {de:'Zu teuer',jp:'高すぎます',rm:'Takasugimasu'},
-  {de:'Ich schaue nur',jp:'見ているだけです',rm:'Mite iru dake desu'},
-  {de:'Ich nehme das',jp:'これをください',rm:'Kore o kudasai'},
-  {de:'Haben Sie eine Tüte?',jp:'袋はありますか？',rm:'Fukuro wa arimasu ka?'},
-]},
-{cat:'Notfall',ph:[
-  {de:'Hilfe!',jp:'助けて！',rm:'Tasukete!'},
-  {de:'Bitte rufen Sie einen Arzt',jp:'医者を呼んでください',rm:'Isha o yonde kudasai'},
-  {de:'Ich brauche ein Krankenhaus',jp:'病院が必要です',rm:'Byōin ga hitsuyō desu'},
-  {de:'Ich bin verloren',jp:'迷子になりました',rm:'Maigo ni narimashita'},
-  {de:'Polizei! / Feuer!',jp:'警察！ / 火事！',rm:'Keisatsu! / Kaji!'},
-  {de:'Polizei: 110 · Notarzt: 119',jp:'警察：110 · 救急：119',rm:'Keisatsu: 110 · Kyūkyū: 119'},
-]}
-];
-
-(function(){
-  var h='<div class="page-title">🗣️ Japanische Phrasen</div>'+
-    '<div class="page-sub" style="margin-bottom:14px">Tippen zum Kopieren</div>';
-  PH.forEach(function(cat,ci){
-    var cards=cat.ph.map(function(p,pi){
-      var id='b'+ci+'_'+pi;
-      var jp=p.jp.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-      return'<div class="ph-card" onclick="cp(\''+jp+'\',\''+id+'\')">'+
-        '<div class="ph-de">'+p.de+'</div>'+
-        '<div class="ph-jp">'+p.jp+'</div>'+
-        '<div class="ph-rm">'+p.rm+'</div>'+
-        '<span class="copied" id="'+id+'">Kopiert ✓</span>'+
-        '</div>';
+// ─── City Detail ─────────────────────────────────────────────────────────────
+function openCity(k) {
+  var c = C.find(function (x) { return x.k === k; });
+  var att = c.a.map(function (a) {
+    var tg = a.t.map(function (t) {
+      var s = TAGS[t] || { bg: '#eee', c: '#555', lbl: t };
+      return '<span class="tag" style="background:' + s.bg + ';color:' + s.c + '">' + s.lbl + '</span>';
     }).join('');
-    h+='<div class="ph-cat"><div class="ph-cat-title">'+cat.cat+'</div>'+cards+'</div>';
-  });
-  document.getElementById('vph').innerHTML=h;
-})();
-
-function cp(text,bid){
-  var show=function(){var el=document.getElementById(bid);if(el){el.classList.add('show');setTimeout(function(){el.classList.remove('show');},1400);}};
-  if(navigator.clipboard){navigator.clipboard.writeText(text).then(show).catch(show);}
-  else{try{var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}catch(e){}show();}
+    return '<div class="att-card"><div class="att-name">' + a.n + '</div><div class="att-desc">' + a.d + '</div>' + (tg ? '<div class="tags">' + tg + '</div>' : '') + '</div>';
+  }).join('');
+  var tips = c.tp.map(function (t) { return '<div class="tip-card">💡 ' + t + '</div>'; }).join('');
+  var tin = c.ti ? '<div class="sec"><div class="sec-hd">🚆 Anreise</div><div class="transit-card">' + c.ti + '</div></div>' : '';
+  var tout = c.nt ? '<div class="sec"><div class="sec-hd">🚆 Weiterreise</div><div class="transit-card">' + c.nt + '</div></div>' : '';
+  var ci = document.getElementById('v-ci');
+  ci.innerHTML =
+    '<div class="back-btn" onclick="showOV()">← Übersicht</div>' +
+    '<div class="city-hero" style="background:' + c.col + '">' +
+    '<div class="hero-emoji">' + c.e + '</div>' +
+    '<div class="hero-name">' + c.n + '</div>' +
+    '<div class="hero-sub">' + c.s + '</div>' +
+    '<div class="hero-dates">' + c.d + ' · ' + c.ni + '</div>' +
+    '<div class="hero-hotel">🏨 ' + c.h + '</div></div>' +
+    tin +
+    '<div class="sec"><div class="sec-hd">⭐ Sehenswürdigkeiten</div>' + att + '</div>' +
+    '<div class="sec"><div class="sec-hd">💡 Insider-Tipps</div>' + tips + '</div>' +
+    tout;
+  document.getElementById('v-ov').classList.add('hidden');
+  ci.classList.remove('hidden');
+  document.querySelectorAll('.ctab').forEach(function (t) { t.classList.remove('on'); });
+  var tab = document.getElementById('ct-' + k);
+  if (tab) tab.classList.add('on');
+  window.scrollTo(0, 0);
 }
 
-// PWA
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
+// ─── Info ────────────────────────────────────────────────────────────────────
+(function () {
+  document.getElementById('v-info-content').innerHTML = INFO.map(function (b) {
+    return '<div class="info-card"><div class="info-title">' + b.i + ' ' + b.t + '</div><ul class="info-list">' +
+      b.l.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>';
+  }).join('');
+})();
+
+// ─── Currency ────────────────────────────────────────────────────────────────
+var RATE = 168;
+var quickAmounts = [10, 20, 50, 100];
+var refs = [
+  [3, 500, 'Kaffee / Snack'],
+  [5, 900, 'Ramen / Udon'],
+  [9, 1500, 'Sushi-Set'],
+  [18, 3000, 'Restaurant-Abend'],
+  [6, 1000, 'Aktivität / Museum'],
+  [60, 10000, 'Tages-Budget']
+];
+
+(function () {
+  document.getElementById('quick-row').innerHTML = quickAmounts.map(function (v) {
+    return '<button class="quick-btn" onclick="qc(' + v + ')">' + v + ' CHF</button>';
+  }).join('');
+  document.getElementById('ref-card').innerHTML =
+    '<div class="ref-hd">Typische Kosten</div>' +
+    refs.map(function (r) {
+      return '<div class="ref-row"><span class="ref-label">' + r[2] + '</span><span class="ref-val">~' + r[0] + ' CHF · ' + r[1].toLocaleString('de') + ' ¥</span></div>';
+    }).join('');
+})();
+
+function cvCHF() {
+  var v = parseFloat(document.getElementById('chf-i').value);
+  document.getElementById('jpy-i').value = isNaN(v) ? '' : Math.round(v * RATE);
+}
+function cvJPY() {
+  var v = parseFloat(document.getElementById('jpy-i').value);
+  document.getElementById('chf-i').value = isNaN(v) ? '' : (v / RATE).toFixed(2);
+}
+function qc(chf) {
+  document.getElementById('chf-i').value = chf;
+  document.getElementById('jpy-i').value = Math.round(chf * RATE);
+}
+function swapCur() {
+  var a = document.getElementById('chf-i').value, b = document.getElementById('jpy-i').value;
+  document.getElementById('chf-i').value = b ? (parseFloat(b) / RATE).toFixed(2) : '';
+  document.getElementById('jpy-i').value = a ? Math.round(parseFloat(a) * RATE) : '';
+}
+
+// ─── Phrases ─────────────────────────────────────────────────────────────────
+var PH = [
+  { cat: 'Begrüßung & Basics', ph: [
+    { de: 'Danke schön', jp: 'ありがとうございます', rm: 'Arigatō gozaimasu' },
+    { de: 'Bitte / Gern geschehen', jp: 'どうぞ / どういたしまして', rm: 'Dōzo / Dō itashimashite' },
+    { de: 'Entschuldigung', jp: 'すみません', rm: 'Sumimasen' },
+    { de: 'Guten Morgen', jp: 'おはようございます', rm: 'Ohayō gozaimasu' },
+    { de: 'Auf Wiedersehen', jp: 'さようなら', rm: 'Sayōnara' },
+    { de: 'Ja / Nein', jp: 'はい / いいえ', rm: 'Hai / Iie' },
+    { de: 'Ich verstehe nicht', jp: 'わかりません', rm: 'Wakarimasen' },
+    { de: 'Sprechen Sie Englisch?', jp: '英語を話せますか？', rm: 'Eigo o hanasemasu ka?' },
+  ]},
+  { cat: 'Restaurant & Essen', ph: [
+    { de: 'Guten Appetit (vor dem Essen)', jp: 'いただきます', rm: 'Itadakimasu' },
+    { de: 'Das war lecker!', jp: 'おいしかった！', rm: 'Oishikatta!' },
+    { de: 'Die Rechnung bitte', jp: 'お会計をお願いします', rm: 'Okaikei o onegaishimasu' },
+    { de: 'Ein Tisch für zwei', jp: '二人席をお願いします', rm: 'Futari seki o onegaishimasu' },
+    { de: 'Was empfehlen Sie?', jp: 'おすすめは何ですか？', rm: 'Osusume wa nan desu ka?' },
+    { de: 'Ein Bier bitte', jp: 'ビールを一つください', rm: 'Bīru o hitotsu kudasai' },
+    { de: 'Ohne Fleisch bitte', jp: 'お肉なしでお願いします', rm: 'Oniku nashi de onegaishimasu' },
+    { de: 'Vegetarisch bitte', jp: 'ベジタリアン料理はありますか？', rm: 'Bejitarian ryōri wa arimasu ka?' },
+  ]},
+  { cat: 'Transport', ph: [
+    { de: 'Wo ist der Bahnhof?', jp: '駅はどこですか？', rm: 'Eki wa doko desu ka?' },
+    { de: 'Eine Fahrkarte nach Tokyo', jp: '東京まで一枚ください', rm: 'Tōkyō made ichimai kudasai' },
+    { de: 'Zum Flughafen bitte', jp: '空港までお願いします', rm: 'Kūkō made onegaishimasu' },
+    { de: 'Hier aussteigen bitte', jp: 'ここで降ります', rm: 'Koko de orimasu' },
+    { de: 'Nächste Station?', jp: '次の駅はどこですか？', rm: 'Tsugi no eki wa doko desu ka?' },
+    { de: 'Wo ist die U-Bahn?', jp: '地下鉄はどこですか？', rm: 'Chikatetsu wa doko desu ka?' },
+  ]},
+  { cat: 'Shopping', ph: [
+    { de: 'Wie viel kostet das?', jp: 'これはいくらですか？', rm: 'Kore wa ikura desu ka?' },
+    { de: 'Zu teuer', jp: '高すぎます', rm: 'Takasugimasu' },
+    { de: 'Ich schaue nur', jp: '見ているだけです', rm: 'Mite iru dake desu' },
+    { de: 'Ich nehme das', jp: 'これをください', rm: 'Kore o kudasai' },
+    { de: 'Haben Sie eine Tüte?', jp: '袋はありますか？', rm: 'Fukuro wa arimasu ka?' },
+    { de: 'Haben Sie das auch kleiner?', jp: '小さいサイズはありますか？', rm: 'Chīsai saizu wa arimasu ka?' },
+  ]},
+  { cat: 'Notfall', ph: [
+    { de: 'Hilfe!', jp: '助けて！', rm: 'Tasukete!' },
+    { de: 'Rufen Sie einen Arzt', jp: '医者を呼んでください', rm: 'Isha o yonde kudasai' },
+    { de: 'Ich brauche ein Krankenhaus', jp: '病院が必要です', rm: 'Byōin ga hitsuyō desu' },
+    { de: 'Ich bin verloren', jp: '迷子になりました', rm: 'Maigo ni narimashita' },
+    { de: 'Polizei rufen!', jp: '警察を呼んでください！', rm: 'Keisatsu o yonde kudasai!' },
+    { de: 'Polizei 110 · Notarzt 119', jp: '警察：110 · 救急：119', rm: 'Keisatsu: 110 · Kyūkyū: 119' },
+  ]}
+];
+
+// Speech
+var synth = window.speechSynthesis;
+var curUtter = null;
+var curBtn = null;
+
+function speak(text, btn) {
+  if (synth.speaking) { synth.cancel(); }
+  if (curBtn && curBtn !== btn) { curBtn.classList.remove('playing'); curBtn.textContent = '🔊'; }
+  if (curBtn === btn && !synth.speaking) { curBtn = null; return; }
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP';
+  u.rate = 0.8;
+  u.pitch = 1.0;
+  btn.classList.add('playing');
+  btn.textContent = '⏸';
+  curBtn = btn;
+  curUtter = u;
+  u.onend = u.onerror = function () {
+    btn.classList.remove('playing');
+    btn.textContent = '🔊';
+    curBtn = null;
+  };
+  synth.speak(u);
+}
+
+function copyTxt(text, btn) {
+  var done = function () {
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(function () { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1400);
+  };
+  if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done).catch(done); }
+  else { try { var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); } catch (e) {} done(); }
+}
+
+function renderPH(list) {
+  var el = document.getElementById('ph-list');
+  if (!list.length) { el.innerHTML = '<div class="no-results">🔍 Keine Treffer gefunden</div>'; return; }
+  var html = '';
+  list.forEach(function (item, idx) {
+    if (item.isHd) { html += '<div class="ph-cat-hd">' + item.cat + '</div>'; return; }
+    var id = 'ph' + idx;
+    var jp = item.jp.replace(/'/g, "\\'");
+    html += '<div class="ph-card">' +
+      '<div class="ph-texts">' +
+      '<div class="ph-de">' + item.de + '</div>' +
+      '<div class="ph-jp">' + item.jp + '</div>' +
+      '<div class="ph-rm">' + item.rm + '</div>' +
+      '</div>' +
+      '<div class="ph-actions">' +
+      '<button class="play-btn" id="pb' + id + '" onclick="speak(\'' + jp + '\',this)" title="Abspielen">🔊</button>' +
+      '<button class="copy-btn" id="cb' + id + '" onclick="copyTxt(\'' + jp + '\',this)" title="Kopieren">📋</button>' +
+      '</div>' +
+      '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function buildPHList(q) {
+  var items = [];
+  PH.forEach(function (cat) {
+    var filtered = cat.ph.filter(function (p) {
+      if (!q) return true;
+      var lq = q.toLowerCase();
+      return p.de.toLowerCase().includes(lq) || p.jp.includes(q) || p.rm.toLowerCase().includes(lq);
+    });
+    if (filtered.length) {
+      if (!q) items.push({ isHd: true, cat: cat.cat });
+      filtered.forEach(function (p) { items.push(p); });
+    }
+  });
+  return items;
+}
+
+renderPH(buildPHList(''));
+
+function filterPh() {
+  var q = document.getElementById('search-inp').value.trim();
+  var clr = document.getElementById('search-clear');
+  clr.style.display = q ? 'flex' : 'none';
+  if (synth.speaking) { synth.cancel(); if (curBtn) { curBtn.classList.remove('playing'); curBtn.textContent = '🔊'; curBtn = null; } }
+  renderPH(buildPHList(q));
+}
+
+function clearSearch() {
+  document.getElementById('search-inp').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  renderPH(buildPHList(''));
+}
+
+// ─── PWA ─────────────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 </script>
 </body>
 </html>
