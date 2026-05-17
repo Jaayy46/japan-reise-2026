@@ -8,213 +8,312 @@
 <meta name="theme-color" content="#b5001f" id="tc">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 <title>🇯🇵 Japan 2026</title>
 <style>
-:root{
-  --bg:#f5f2ef;--bg2:#ede9e4;--card:#fff;--card2:#faf8f6;
-  --border:rgba(0,0,0,.08);--shadow:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
-  --text:#111;--text2:#444;--text3:#777;--text4:#aaa;
-  --acc:#b5001f;--acc2:#d4002b;--acc-light:#fdeced;
-  --hdr:#b5001f;--nav-bg:#fff;--nav-border:rgba(0,0,0,.1);
-  --input-bg:#f0ece8;--input-border:#ddd;
-  --tip-bg:#fffbf0;--tip-border:#e8d57a;--tip-text:#4a3400;
-  --tag-hi-bg:#fce4ec;--tag-hi-c:#880e4f;
-  --tag-free-bg:#e8f5e9;--tag-free-c:#2e7d32;
-  --tag-pay-bg:#fff3e0;--tag-pay-c:#bf360c;
-  --tag-eve-bg:#ede7f6;--tag-eve-c:#4527a0;
-  --tag-ex-bg:#e3f2fd;--tag-ex-c:#0d47a1;
-  --safe-bottom:env(safe-area-inset-bottom,16px);
+/* ── Design Tokens ── */
+:root {
+  --bg: #f5f2ef; --bg2: #ede9e4; --card: #fff; --card2: #faf8f6;
+  --border: rgba(0,0,0,.08);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.07);
+  --shadow: 0 2px 8px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.05);
+  --text: #111; --text2: #444; --text3: #777; --text4: #aaa;
+  --acc: #b5001f; --acc-light: #fdeced;
+  --hdr: #b5001f; --nav-bg: #fff; --nav-border: rgba(0,0,0,.1);
+  --input-bg: #f0ece8; --input-border: #ddd;
+  --tip-bg: #fffbf0; --tip-border: #e8d57a; --tip-text: #4a3400;
+  --safe-b: env(safe-area-inset-bottom, 16px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  --nav-h: 56px;
 }
-[data-dark]{
-  --bg:#0e0e0e;--bg2:#171717;--card:#1c1c1c;--card2:#222;
-  --border:rgba(255,255,255,.08);--shadow:0 1px 4px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.3);
-  --text:#f0ede8;--text2:#b0ada8;--text3:#666;--text4:#444;
-  --acc:#e84060;--acc2:#ff4d6a;--acc-light:#2a0a10;
-  --hdr:#7a0015;--nav-bg:#1c1c1c;--nav-border:rgba(255,255,255,.1);
-  --input-bg:#252020;--input-border:#3a3030;
-  --tip-bg:#1a1600;--tip-border:#3a2e00;--tip-text:#c8a840;
+[data-dark] {
+  --bg: #0e0e0e; --bg2: #171717; --card: #1c1c1c; --card2: #222;
+  --border: rgba(255,255,255,.09);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.4);
+  --shadow: 0 2px 8px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.3);
+  --text: #f0ede8; --text2: #b0ada8; --text3: #666; --text4: #444;
+  --acc: #e84060; --acc-light: #2a0a10;
+  --hdr: #7a0015; --nav-bg: #1c1c1c; --nav-border: rgba(255,255,255,.1);
+  --input-bg: #252020; --input-border: #3a3030;
+  --tip-bg: #1a1500; --tip-border: #3a2e00; --tip-text: #c8a840;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  background: var(--bg); color: var(--text); overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+button { touch-action: manipulation; }
 
 /* ── Header ── */
-.hdr{background:var(--hdr);color:#fff;padding:14px 16px 0;position:sticky;top:0;z-index:90;transition:background .2s}
-.hdr-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
-.hdr-title{font-size:19px;font-weight:700;letter-spacing:-.3px}
-.hdr-sub{font-size:11px;opacity:.75;margin-bottom:8px}
-.dm-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:18px;padding:4px 10px;font-size:14px;cursor:pointer;font-family:inherit}
+.hdr { background: var(--hdr); color: #fff; padding: 12px 16px 0; position: sticky; top: 0; z-index: 90; transition: background .25s; }
+.hdr-row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+.hdr-title { font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
+.hdr-sub { font-size: 11px; opacity: .75; margin-bottom: 8px; }
+.dm-btn {
+  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+  color: #fff; border-radius: 18px; padding: 6px 12px; font-size: 14px;
+  cursor: pointer; font-family: inherit; min-height: 34px;
+}
 
 /* ── Countdown ── */
-.cd{font-size:12px;font-weight:500;border-radius:8px;padding:6px 10px;margin-bottom:10px;line-height:1.4;transition:background .2s,color .2s}
-.cd.pre{background:rgba(255,255,255,.18);color:rgba(255,255,255,.95)}
-.cd.act{background:rgba(255,255,255,.22);color:#fff}
-.cd.done{background:rgba(255,255,255,.14);color:rgba(255,255,255,.8)}
-.cd strong{font-weight:700}
-.prog{height:3px;background:rgba(255,255,255,.25);border-radius:2px;margin-top:5px;overflow:hidden}
-.prog-fill{height:100%;background:rgba(255,255,255,.85);border-radius:2px}
+.cd { font-size: 12px; font-weight: 500; border-radius: 8px; padding: 6px 10px; margin-bottom: 10px; line-height: 1.4; }
+.cd.pre  { background: rgba(255,255,255,.18); color: rgba(255,255,255,.95); }
+.cd.act  { background: rgba(255,255,255,.22); color: #fff; }
+.cd.done { background: rgba(255,255,255,.14); color: rgba(255,255,255,.8); }
+.cd strong { font-weight: 700; }
+.prog { height: 3px; background: rgba(255,255,255,.25); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+.prog-fill { height: 100%; background: rgba(255,255,255,.85); border-radius: 2px; }
 
-/* ── City tabs in header ── */
-.city-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
-.city-tabs::-webkit-scrollbar{display:none}
-.ctab{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.92);border-radius:18px;padding:5px 12px;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;flex-shrink:0;font-family:inherit;transition:background .15s}
-.ctab.on{background:#fff;color:var(--acc);border-color:#fff}
+/* ── City Tabs (header) ── */
+.city-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; overscroll-behavior-x: contain; }
+.city-tabs::-webkit-scrollbar { display: none; }
+.ctab {
+  background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.3);
+  color: rgba(255,255,255,.92); border-radius: 18px; padding: 6px 13px;
+  font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer;
+  flex-shrink: 0; font-family: inherit; transition: background .15s;
+  touch-action: manipulation; min-height: 34px;
+}
+.ctab.on { background: #fff; color: var(--acc); border-color: #fff; }
 
 /* ── Bottom Nav ── */
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--nav-bg);border-top:1px solid var(--nav-border);display:flex;padding-bottom:var(--safe-bottom);transition:background .2s,border-color .2s}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 0 4px;cursor:pointer;background:none;border:none;font-family:inherit;color:var(--text3);transition:color .15s;gap:2px}
-.nav-btn.on{color:var(--acc)}
-.nav-ico{font-size:22px;line-height:1}
-.nav-lbl{font-size:10px;font-weight:600}
+.nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--nav-bg); border-top: 1px solid var(--nav-border);
+  display: flex; padding-bottom: var(--safe-b);
+  transition: background .25s, border-color .25s;
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 9px 0 5px; cursor: pointer; background: none; border: none;
+  font-family: inherit; color: var(--text3); transition: color .15s;
+  gap: 2px; touch-action: manipulation; min-height: 44px;
+}
+.nav-btn.on { color: var(--acc); }
+.nav-ico { font-size: 22px; line-height: 1; }
+.nav-lbl { font-size: 10px; font-weight: 600; letter-spacing: .01em; }
 
-/* ── Content ── */
-.content{padding-bottom:calc(66px + var(--safe-bottom))}
-.view{display:none}
-.view.show{display:block}
-.wrap{max-width:480px;margin:0 auto;padding:16px 14px}
+/* ── Content area ── */
+.content { padding-bottom: calc(var(--nav-h) + var(--safe-b)); }
+.view { display: none; }
+.view.show { display: block; }
+.wrap { max-width: 480px; margin: 0 auto; padding: 16px 14px; }
 
 /* ── Overview ── */
-.intro-banner{background:var(--acc-light);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;padding:11px 14px;margin-bottom:16px;font-size:13px;color:var(--text2);line-height:1.5}
-[data-dark] .intro-banner{color:var(--text2)}
-.city-card{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:10px;cursor:pointer;overflow:hidden;display:flex;align-items:center;padding:14px 14px;gap:12px;box-shadow:var(--shadow);transition:transform .1s,background .2s}
-.city-card:active{transform:scale(.98)}
-.city-dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.city-info{flex:1;min-width:0}
-.city-name{font-size:15px;font-weight:700}
-.city-dates{font-size:11px;color:var(--text3);margin-top:2px}
-.city-hotel{font-size:11px;color:var(--text4);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.city-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:18px;white-space:nowrap;flex-shrink:0}
-.transit-row{display:flex;align-items:flex-start;gap:8px;padding:2px 0 8px 16px}
-.transit-line{width:1px;height:18px;background:var(--border);margin-right:4px;flex-shrink:0;margin-top:2px}
-.transit-text{font-size:11px;color:var(--text3);line-height:1.5}
+.intro-banner {
+  background: var(--acc-light); border-left: 3px solid var(--acc);
+  border-radius: 0 10px 10px 0; padding: 11px 14px; margin-bottom: 16px;
+  font-size: 13px; color: var(--text2); line-height: 1.5;
+}
+.city-card {
+  background: var(--card); border-radius: 14px; border: 1px solid var(--border);
+  margin-bottom: 10px; cursor: pointer; display: flex; align-items: center;
+  padding: 14px; gap: 12px; box-shadow: var(--shadow);
+  transition: transform .12s ease, background .2s; touch-action: manipulation;
+  min-height: 72px;
+}
+.city-card:active { transform: scale(.98); }
+.city-dot { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.city-info { flex: 1; min-width: 0; }
+.city-name { font-size: 15px; font-weight: 700; }
+.city-dates { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.city-hotel { font-size: 11px; color: var(--text4); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.city-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 18px; white-space: nowrap; flex-shrink: 0; }
+.transit-row { display: flex; align-items: flex-start; gap: 8px; padding: 2px 0 8px 16px; }
+.transit-line { width: 1px; height: 18px; background: var(--border); margin-right: 4px; flex-shrink: 0; margin-top: 2px; }
+.transit-text { font-size: 11px; color: var(--text3); line-height: 1.5; }
 
 /* ── City Detail ── */
-.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--acc);font-weight:600;cursor:pointer;padding:6px 0 12px}
-.city-hero{border-radius:14px;padding:20px 18px;margin-bottom:16px;color:#fff}
-.hero-emoji{font-size:36px;margin-bottom:8px}
-.hero-name{font-size:26px;font-weight:800;letter-spacing:-.5px}
-.hero-sub{font-size:12px;opacity:.85;margin-top:3px}
-.hero-dates{font-size:13px;opacity:.9;margin-top:7px;font-weight:500}
-.hero-hotel{font-size:12px;opacity:.72;margin-top:5px}
-.sec-hd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px}
-.sec{margin-bottom:20px}
-.att-card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:background .2s}
-.att-name{font-size:14px;font-weight:700;margin-bottom:3px}
-.att-desc{font-size:12px;color:var(--text2);line-height:1.6}
-.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
-.tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
-.tip-card{background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--tip-text);line-height:1.6;margin-bottom:8px;transition:background .2s,border-color .2s}
-.transit-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.6;transition:background .2s}
+.back-btn {
+  display: flex; align-items: center; gap: 6px; font-size: 14px;
+  color: var(--acc); font-weight: 600; cursor: pointer; padding: 8px 0 14px;
+  touch-action: manipulation; min-height: 44px;
+}
+.city-hero { border-radius: 14px; padding: 20px 18px; margin-bottom: 16px; color: #fff; }
+.hero-emoji { font-size: 36px; margin-bottom: 8px; }
+.hero-name { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+.hero-sub { font-size: 12px; opacity: .85; margin-top: 3px; }
+.hero-dates { font-size: 13px; opacity: .9; margin-top: 7px; font-weight: 500; }
+.hero-hotel { font-size: 12px; opacity: .72; margin-top: 5px; }
+.sec-hd { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); margin-bottom: 8px; }
+.sec { margin-bottom: 20px; }
+.att-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow-sm); transition: background .2s; }
+.att-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.att-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.tip-card { background: var(--tip-bg); border: 1px solid var(--tip-border); border-radius: 10px; padding: 10px 13px; font-size: 12px; color: var(--tip-text); line-height: 1.6; margin-bottom: 8px; }
+.transit-card { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; }
 
 /* ── Currency ── */
-.cur-wrap{max-width:480px;margin:0 auto;padding:16px 14px}
-.page-hd{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:2px}
-.page-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
-.cur-main{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:18px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
-.cur-field{margin-bottom:12px}
-.cur-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:5px}
-.cur-input-wrap{display:flex;align-items:center;background:var(--input-bg);border:1.5px solid transparent;border-radius:12px;padding:10px 14px;gap:8px;transition:border-color .2s}
-.cur-input-wrap:focus-within{border-color:var(--acc)}
-.cur-flag{font-size:20px;line-height:1;flex-shrink:0}
-.cur-input{flex:1;background:none;border:none;font-size:22px;font-weight:700;color:var(--text);font-family:inherit;outline:none;width:100%;min-width:0}
-.cur-code{font-size:13px;font-weight:700;color:var(--text3);flex-shrink:0}
-.cur-swap-btn{display:flex;align-items:center;justify-content:center;margin:6px auto;width:36px;height:36px;background:var(--acc-light);border:1px solid var(--border);border-radius:50%;cursor:pointer;font-size:16px;color:var(--acc);transition:transform .2s}
-.cur-swap-btn:active{transform:rotate(180deg) scale(.9)}
-.quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.quick-btn{flex:1;min-width:60px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 4px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:center;transition:background .15s,transform .1s}
-.quick-btn:active{transform:scale(.95)}
-.ref-card{background:var(--card);border-radius:14px;border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
-.ref-hd{padding:12px 14px 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
-.ref-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid var(--border)}
-.ref-label{font-size:13px;color:var(--text2)}
-.ref-val{font-size:13px;font-weight:700;color:var(--acc)}
+.page-hd { font-size: 20px; font-weight: 800; letter-spacing: -.4px; margin-bottom: 2px; }
+.page-sub { font-size: 12px; color: var(--text3); margin-bottom: 16px; }
+.cur-main { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 18px 16px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.cur-field { margin-bottom: 12px; }
+.cur-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 5px; }
+.cur-input-wrap { display: flex; align-items: center; background: var(--input-bg); border: 1.5px solid transparent; border-radius: 12px; padding: 10px 14px; gap: 8px; transition: border-color .2s; }
+.cur-input-wrap:focus-within { border-color: var(--acc); }
+.cur-flag { font-size: 20px; line-height: 1; flex-shrink: 0; }
+.cur-input { flex: 1; background: none; border: none; font-size: 22px; font-weight: 700; color: var(--text); font-family: inherit; outline: none; width: 100%; min-width: 0; touch-action: manipulation; }
+.cur-code { font-size: 13px; font-weight: 700; color: var(--text3); flex-shrink: 0; }
+.cur-swap-btn {
+  display: flex; align-items: center; justify-content: center; margin: 6px auto;
+  width: 44px; height: 44px; background: var(--acc-light); border: 1px solid var(--border);
+  border-radius: 50%; cursor: pointer; font-size: 18px; color: var(--acc);
+  transition: transform .2s; touch-action: manipulation;
+}
+.cur-swap-btn:active { transform: rotate(180deg) scale(.9); }
+.quick-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.quick-btn {
+  flex: 1; min-width: 60px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 4px; font-size: 13px; font-weight: 700;
+  color: var(--text); cursor: pointer; font-family: inherit; text-align: center;
+  transition: background .15s, transform .1s; touch-action: manipulation; min-height: 44px;
+}
+.quick-btn:active { transform: scale(.95); }
+.ref-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
+.ref-hd { padding: 12px 14px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); }
+.ref-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-top: 1px solid var(--border); }
+.ref-label { font-size: 13px; color: var(--text2); }
+.ref-val { font-size: 13px; font-weight: 700; color: var(--acc); }
 
 /* ── Phrases ── */
-.ph-wrap{max-width:480px;margin:0 auto;padding:16px 14px}
-.search-wrap{position:relative;margin-bottom:14px}
-.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text3);pointer-events:none}
-.search-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:11px 12px 11px 38px;font-size:14px;color:var(--text);font-family:inherit;outline:none;box-shadow:var(--shadow);transition:border-color .2s}
-.search-inp:focus{border-color:var(--acc)}
-.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:var(--bg2);border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;color:var(--text3);display:none;align-items:center;justify-content:center}
-.ph-cat-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:16px 0 8px}
-.ph-cat-hd:first-child{margin-top:0}
-.ph-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:background .2s}
-.ph-texts{flex:1;min-width:0}
-.ph-de{font-size:13px;font-weight:600;margin-bottom:4px}
-.ph-jp{font-size:18px;line-height:1.4;margin-bottom:3px}
-.ph-rm{font-size:11px;color:var(--text3);font-style:italic}
-.ph-actions{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
-.play-btn{width:36px;height:36px;border-radius:50%;background:var(--acc-light);border:1px solid rgba(0,0,0,.08);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--acc);transition:background .15s,transform .1s;flex-shrink:0}
-.play-btn:active{transform:scale(.9)}
-.play-btn.playing{background:var(--acc);color:#fff;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.copy-btn{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text3);transition:background .15s}
-.copy-btn.copied{background:var(--tag-free-bg);color:var(--tag-free-c)}
-.no-results{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-ico { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--text3); pointer-events: none; }
+.search-inp {
+  width: 100%; background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 12px 40px 12px 38px; font-size: 15px;
+  color: var(--text); font-family: inherit; outline: none;
+  box-shadow: var(--shadow-sm); transition: border-color .2s; min-height: 44px;
+}
+.search-inp:focus { border-color: var(--acc); }
+.search-clear {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: var(--bg2); border: none; border-radius: 50%; width: 28px; height: 28px;
+  cursor: pointer; font-size: 13px; color: var(--text3);
+  display: none; align-items: center; justify-content: center; touch-action: manipulation;
+}
+.ph-cat-hd { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); margin: 18px 0 8px; }
+.ph-cat-hd:first-child { margin-top: 0; }
+.ph-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 7px; display: flex; align-items: flex-start; gap: 10px; box-shadow: var(--shadow-sm); }
+.ph-texts { flex: 1; min-width: 0; }
+.ph-de { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.ph-jp { font-size: 18px; line-height: 1.4; margin-bottom: 3px; }
+.ph-rm { font-size: 11px; color: var(--text3); font-style: italic; }
+.ph-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+.play-btn {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--acc-light);
+  border: 1px solid rgba(0,0,0,.08); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 18px; color: var(--acc);
+  transition: background .15s, transform .1s; touch-action: manipulation;
+}
+.play-btn:active { transform: scale(.9); }
+.play-btn.playing { background: var(--acc); color: #fff; }
+.copy-btn {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--bg2);
+  border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 13px; color: var(--text3);
+  transition: background .15s; touch-action: manipulation;
+}
+.copy-btn.copied { background: #e8f5e9; color: #2e7d32; }
+.no-results { text-align: center; padding: 48px 20px; color: var(--text3); font-size: 14px; }
 
 /* ── Info ── */
-.info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);transition:background .2s}
-.info-title{font-size:14px;font-weight:700;margin-bottom:10px}
-.info-list{list-style:none}
-.info-list li{font-size:12px;color:var(--text2);line-height:2;display:flex;gap:6px}
-.info-list li::before{content:"→";color:var(--acc);flex-shrink:0}
-
-.hidden{display:none!important}
+.info-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+.info-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.info-list { list-style: none; }
+.info-list li { font-size: 12px; color: var(--text2); line-height: 2.1; display: flex; gap: 6px; }
+.info-list li::before { content: "→"; color: var(--acc); flex-shrink: 0; }
 
 /* ── Map ── */
-#v-map{position:relative}
-#map-el{width:100%;min-height:400px;background:var(--bg2)}
-.map-legend{position:absolute;bottom:calc(var(--safe-bottom) + 12px);left:12px;z-index:500;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 11px;font-size:11px;color:var(--text2);box-shadow:var(--shadow);pointer-events:none}
-.legend-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.legend-row:last-child{margin-bottom:0}
-.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.8)}
-.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 20px rgba(0,0,0,.18)!important;border:1px solid rgba(0,0,0,.06)!important}
-.leaflet-popup-content{margin:12px 14px!important;font-family:-apple-system,BlinkMacSystemFont,sans-serif!important}
-.map-popup-btn{background:#b5001f;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;width:100%;cursor:pointer;margin-top:8px;font-family:inherit}
+#v-map { position: relative; }
+#map-el { width: 100%; min-height: 400px; background: var(--bg2); }
+.map-legend {
+  position: absolute; bottom: calc(var(--safe-b) + 14px); left: 14px; z-index: 500;
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 8px 12px; font-size: 11px; color: var(--text2);
+  box-shadow: var(--shadow); pointer-events: none;
+}
+.legend-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.legend-row:last-child { margin-bottom: 0; }
+.legend-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,.8); }
+.map-popup-btn {
+  background: var(--acc, #b5001f); color: #fff; border: none; border-radius: 8px;
+  padding: 9px 14px; font-size: 12px; font-weight: 700; width: 100%; cursor: pointer;
+  margin-top: 8px; font-family: -apple-system, sans-serif; touch-action: manipulation;
+}
+.leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 4px 24px rgba(0,0,0,.15) !important; }
+.leaflet-popup-content { margin: 12px 14px !important; font-family: -apple-system, sans-serif !important; }
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* ── Utilities ── */
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="hdr" id="hdr">
+<!-- ═══ Header ═══ -->
+<header class="hdr" id="hdr">
   <div class="hdr-row1">
     <span class="hdr-title">🇯🇵 Japan 2026</span>
-    <button class="dm-btn" id="dm-btn" onclick="toggleDM()">🌙</button>
+    <button class="dm-btn" id="dm-btn" onclick="toggleDM()" aria-label="Dark Mode umschalten">🌙</button>
   </div>
   <div class="hdr-sub">20. Juli – 5. August · 6 Stationen</div>
-  <div id="cd" class="cd pre"></div>
-  <div id="city-tabs-bar" class="city-tabs hidden"></div>
-</div>
+  <div id="cd" class="cd pre" role="status" aria-live="polite"></div>
+  <div id="city-tabs" class="city-tabs hidden" role="tablist" aria-label="Städte"></div>
+</header>
 
-<!-- Content -->
-<div class="content">
-  <!-- Reise View -->
-  <div class="view show" id="v-reise">
+<!-- ═══ Content ═══ -->
+<main class="content">
+
+  <!-- Reise -->
+  <div class="view show" id="v-reise" role="tabpanel">
     <div id="v-ov" class="wrap"></div>
     <div id="v-ci" class="wrap hidden"></div>
   </div>
 
-  <!-- Währung View -->
-  <div class="view" id="v-cur">
-    <div class="cur-wrap">
-      <div class="page-hd">💴 Währungsrechner</div>
+  <!-- Karte -->
+  <div class="view" id="v-map" role="tabpanel">
+    <div id="map-el" aria-label="Interaktive Reisekarte Japan"></div>
+    <div class="map-legend" aria-hidden="true">
+      <div class="legend-row"><span class="legend-dot" style="background:#1a6fa8"></span>Stadt</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#e91e63"></span>★ Highlight</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#607d8b"></span>Sehenswürdigkeit</div>
+      <div class="legend-row"><span style="color:var(--acc);font-weight:700;font-size:13px">— —</span>&nbsp;Route</div>
+    </div>
+  </div>
+
+  <!-- Währung -->
+  <div class="view" id="v-cur" role="tabpanel">
+    <div class="wrap">
+      <div class="page-hd">Währungsrechner</div>
       <div class="page-sub">CHF ↔ JPY · Richtwert 2026</div>
       <div class="cur-main">
         <div class="cur-field">
           <div class="cur-label">Schweizer Franken</div>
           <div class="cur-input-wrap">
-            <span class="cur-flag">🇨🇭</span>
-            <input class="cur-input" id="chf-i" type="number" placeholder="0" inputmode="decimal" oninput="cvCHF()">
-            <span class="cur-code">CHF</span>
+            <span class="cur-flag" aria-hidden="true">🇨🇭</span>
+            <input class="cur-input" id="chf-i" type="number" placeholder="0"
+              inputmode="decimal" oninput="cvCHF()" aria-label="CHF Betrag">
+            <span class="cur-code" aria-hidden="true">CHF</span>
           </div>
         </div>
-        <button class="cur-swap-btn" onclick="swapCur()" title="Tauschen">⇅</button>
+        <button class="cur-swap-btn" onclick="swapCur()" aria-label="Währungen tauschen">⇅</button>
         <div class="cur-field">
           <div class="cur-label">Japanischer Yen</div>
           <div class="cur-input-wrap">
-            <span class="cur-flag">🇯🇵</span>
-            <input class="cur-input" id="jpy-i" type="number" placeholder="0" inputmode="decimal" oninput="cvJPY()">
-            <span class="cur-code">JPY</span>
+            <span class="cur-flag" aria-hidden="true">🇯🇵</span>
+            <input class="cur-input" id="jpy-i" type="number" placeholder="0"
+              inputmode="decimal" oninput="cvJPY()" aria-label="JPY Betrag">
+            <span class="cur-code" aria-hidden="true">¥</span>
           </div>
         </div>
         <div class="quick-row" id="quick-row"></div>
@@ -223,83 +322,95 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue"
     </div>
   </div>
 
-  <!-- Phrasen View -->
-  <div class="view" id="v-ph">
-    <div class="ph-wrap">
-      <div class="page-hd">🗣️ Phrasen</div>
-      <div class="page-sub" style="margin-bottom:12px">Tippen zum Abspielen · Langes Tippen zum Kopieren</div>
+  <!-- Phrasen -->
+  <div class="view" id="v-ph" role="tabpanel">
+    <div class="wrap">
+      <div class="page-hd">Japanische Phrasen</div>
+      <div class="page-sub">🔊 Tippen = Abspielen &nbsp;·&nbsp; 📋 = Kopieren</div>
       <div class="search-wrap">
-        <span class="search-ico">🔍</span>
-        <input class="search-inp" id="search-inp" type="search" placeholder="Suchen auf Deutsch, 日本語 oder Romaji…" oninput="filterPh()" onsearch="filterPh()">
-        <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+        <span class="search-ico" aria-hidden="true">🔍</span>
+        <input class="search-inp" id="search-inp" type="search"
+          placeholder="Suchen – Deutsch, 日本語 oder Romaji…"
+          oninput="filterPh()" onsearch="filterPh()" aria-label="Phrasen suchen">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()"
+          aria-label="Suche leeren">✕</button>
       </div>
-      <div id="ph-list"></div>
+      <div id="ph-list" role="list"></div>
     </div>
   </div>
 
-  <!-- Info View -->
-  <div class="view" id="v-info">
+  <!-- Infos -->
+  <div class="view" id="v-info" role="tabpanel">
     <div class="wrap" id="v-info-content"></div>
   </div>
 
-  <!-- Karte View -->
-  <div class="view" id="v-map">
-    <div id="map-el"></div>
-    <div class="map-legend">
-      <div class="legend-row"><span class="legend-dot" style="background:#1a6fa8"></span>Stadt</div>
-      <div class="legend-row"><span class="legend-dot" style="background:#e91e63"></span>★ Highlight</div>
-      <div class="legend-row"><span class="legend-dot" style="background:#607d8b"></span>Sehenswürdigkeit</div>
-      <div class="legend-row"><span style="font-size:13px;line-height:1">- -</span>&nbsp;Route</div>
-    </div>
-  </div>
-</div>
+</main>
 
-<!-- Bottom Nav -->
-<nav class="nav">
-  <button class="nav-btn on" id="nb-reise" onclick="showMain('reise')">
-    <span class="nav-ico">🗺️</span>
+<!-- ═══ Bottom Nav ═══ -->
+<nav class="nav" aria-label="Hauptnavigation">
+  <button class="nav-btn on" id="nb-reise" onclick="showMain('reise')" aria-label="Reise">
+    <span class="nav-ico" aria-hidden="true">✈️</span>
     <span class="nav-lbl">Reise</span>
   </button>
-  <button class="nav-btn" id="nb-cur" onclick="showMain('cur')">
-    <span class="nav-ico">💴</span>
+  <button class="nav-btn" id="nb-map" onclick="showMain('map')" aria-label="Karte">
+    <span class="nav-ico" aria-hidden="true">🗺️</span>
+    <span class="nav-lbl">Karte</span>
+  </button>
+  <button class="nav-btn" id="nb-cur" onclick="showMain('cur')" aria-label="Währungsrechner">
+    <span class="nav-ico" aria-hidden="true">💴</span>
     <span class="nav-lbl">Währung</span>
   </button>
-  <button class="nav-btn" id="nb-ph" onclick="showMain('ph')">
-    <span class="nav-ico">🗣️</span>
+  <button class="nav-btn" id="nb-ph" onclick="showMain('ph')" aria-label="Phrasen">
+    <span class="nav-ico" aria-hidden="true">🗣️</span>
     <span class="nav-lbl">Phrasen</span>
   </button>
-  <button class="nav-btn" id="nb-info" onclick="showMain('info')">
-    <span class="nav-ico">ℹ️</span>
+  <button class="nav-btn" id="nb-info" onclick="showMain('info')" aria-label="Reiseinfos">
+    <span class="nav-ico" aria-hidden="true">ℹ️</span>
     <span class="nav-lbl">Infos</span>
-  </button>
-  <button class="nav-btn" id="nb-map" onclick="showMain('map')">
-    <span class="nav-ico">🗺️</span>
-    <span class="nav-lbl">Karte</span>
   </button>
 </nav>
 
 <script>
-// ─── Dark Mode ───────────────────────────────────────────────────────────────
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// Dark Mode
+// ═══════════════════════════════════════════════════════════════
 var dm = localStorage.getItem('dm') === '1';
+
 function applyDM() {
   document.documentElement.toggleAttribute('data-dark', dm);
   document.getElementById('dm-btn').textContent = dm ? '☀️' : '🌙';
   document.getElementById('tc').content = dm ? '#7a0015' : '#b5001f';
+  if (tileLayer && mapObj) {
+    mapObj.removeLayer(tileLayer);
+    tileLayer = addTiles();
+  }
 }
-function toggleDM() { dm = !dm; localStorage.setItem('dm', dm ? '1' : '0'); applyDM(); }
+function toggleDM() {
+  dm = !dm;
+  localStorage.setItem('dm', dm ? '1' : '0');
+  applyDM();
+}
 applyDM();
 
-// ─── Countdown ───────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Countdown
+// ═══════════════════════════════════════════════════════════════
 (function () {
-  var s = new Date('2026-07-20T00:00:00'), e = new Date('2026-08-06T00:00:00'), n = new Date();
+  var s = new Date('2026-07-20T00:00:00');
+  var e = new Date('2026-08-06T00:00:00');
+  var n = new Date();
   var el = document.getElementById('cd');
   if (n < s) {
     var d = Math.ceil((s - n) / 864e5);
     el.innerHTML = '🗓️ Noch <strong>' + d + ' Tag' + (d === 1 ? '' : 'e') + '</strong> bis zur Abreise';
     el.className = 'cd pre';
   } else if (n < e) {
-    var day = Math.floor((n - s) / 864e5) + 1, pct = Math.round(day / 16 * 100);
-    el.innerHTML = '✈️ <strong>Tag ' + day + '</strong> von 16 – Du bist in Japan!<div class="prog"><div class="prog-fill" style="width:' + pct + '%"></div></div>';
+    var day = Math.floor((n - s) / 864e5) + 1;
+    var pct = Math.round(day / 16 * 100);
+    el.innerHTML = '✈️ <strong>Tag ' + day + '</strong> von 16 – Du bist in Japan!' +
+      '<div class="prog"><div class="prog-fill" style="width:' + pct + '%"></div></div>';
     el.className = 'cd act';
   } else {
     el.innerHTML = '🎌 Tolle Erinnerungen aus Japan!';
@@ -307,66 +418,102 @@ applyDM();
   }
 })();
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Data – Cities
+// ═══════════════════════════════════════════════════════════════
 var C = [
-  { k: 'tokyo', e: '🗼', n: 'Tokyo', s: 'Ginza · Shibuya · Shinjuku', d: '20. – 25. Juli', ni: '5 Nächte', h: 'Quintessa Hotel Tokyo Ginza', col: '#1a6fa8', cl: '#d6eaf8', ll: [35.6762, 139.6503], ti: null, nt: '🚆 Odakyu Romancecar ab Shinjuku → Hakone (~85 Min., ca. 2.500 ¥)', a: [
-    { n: 'Shibuya Scramble Crossing', d: 'Bis zu 3.000 Menschen gleichzeitig – einmalig. Tagsüber UND abends erleben – der Kontrast ist riesig!', t: ['★', '0¥'], ll: [35.6595, 139.7004] },
-    { n: 'Shibuya Sky Observatorium', d: '237m hoch, beste 360°-Aussicht über Tokyo. Bei Sonnenuntergang Fuji-Sicht möglich.', t: ['★', '🎟', '📅'], ll: [35.6581, 139.7016] },
-    { n: 'Meiji-Jingu Schrein', d: 'Ruhiger Shinto-Schrein in 70 ha Wald. Perfekter Kontrast zum Stadtlärm. Morgens besuchen!', t: ['0¥'], ll: [35.6763, 139.6993] },
-    { n: 'Senso-ji Tempel (Asakusa)', d: 'Ältester Tempel Tokyos mit großem Torii-Tor. Früh morgens am ruhigsten.', t: ['★', '0¥'], ll: [35.7148, 139.7967] },
-    { n: 'Hachiko-Statue', d: 'Bronzehund vor dem Shibuya Bahnhof – Symbol für Treue. Klassisches Foto.', t: ['0¥'], ll: [35.6591, 139.7006] },
-    { n: 'Shinjuku – Golden Gai', d: '6 enge Gassen, 200+ Mini-Bars. Retrocharme pur. Cover 400–1.000 ¥.', t: ['🌙'], ll: [35.6940, 139.7042] },
-    { n: 'Shinjuku – Kabukicho', d: 'Neonlichtviertel mit Godzilla-Kopf (Hotel Gracery) – stündliche Show 12–20 Uhr.', t: ['0¥', '🌙'], ll: [35.6952, 139.7034] },
-    { n: 'Omoide Yokocho (Memory Lane)', d: 'Enge Gassen mit winzigen Yakitori-Restaurants am Shinjuku Bahnhof. Perfekt fürs Abendessen!', t: ['🌙'], ll: [35.6931, 139.6997] },
-    { n: 'Shinjuku Gyoen Garten', d: 'Japanische, englische und französische Gärten vereint. Ruhige Oase. Eintritt 500 ¥.', t: ['🎟'], ll: [35.6852, 139.7100] }
-  ], tp: ['Shibuya Sky: Tickets UNBEDINGT vorab online buchen – oft Tage vorher ausverkauft!', 'Shibuya & Shinjuku: nur 7 Min. mit der Yamanote-Linie – gute Tageskombi', 'Harajuku liegt dazwischen: Takeshita Str. (Kawaii) und Omotesando (Luxus)'] },
+  { k: 'tokyo', e: '🗼', n: 'Tokyo', s: 'Ginza · Shibuya · Shinjuku',
+    d: '20. – 25. Juli', ni: '5 Nächte', h: 'Quintessa Hotel Tokyo Ginza',
+    col: '#1a6fa8', cl: '#d6eaf8', ll: [35.6762, 139.6503], ti: null,
+    nt: '🚆 Odakyu Romancecar ab Shinjuku → Hakone (~85 Min., ca. 2.500 ¥)',
+    a: [
+      { n: 'Shibuya Scramble Crossing', d: 'Bis zu 3.000 Menschen gleichzeitig – einmalig. Tagsüber UND abends erleben.', t: ['★', '0¥'], ll: [35.6595, 139.7004] },
+      { n: 'Shibuya Sky Observatorium', d: '237m hoch, beste 360°-Aussicht über Tokyo. Bei Sonnenuntergang Fuji-Sicht möglich.', t: ['★', '🎟', '📅'], ll: [35.6581, 139.7016] },
+      { n: 'Meiji-Jingu Schrein', d: 'Ruhiger Shinto-Schrein in 70 ha Wald. Perfekter Kontrast zum Stadtlärm.', t: ['0¥'], ll: [35.6763, 139.6993] },
+      { n: 'Senso-ji Tempel (Asakusa)', d: 'Ältester Tempel Tokyos. Früh morgens am ruhigsten.', t: ['★', '0¥'], ll: [35.7148, 139.7967] },
+      { n: 'Hachiko-Statue', d: 'Bronzehund vor dem Shibuya Bahnhof – Symbol für Treue.', t: ['0¥'], ll: [35.6591, 139.7006] },
+      { n: 'Shinjuku – Golden Gai', d: '6 enge Gassen, 200+ Mini-Bars. Retrocharme pur. Cover 400–1.000 ¥.', t: ['🌙'], ll: [35.6940, 139.7042] },
+      { n: 'Shinjuku – Kabukicho', d: 'Neonlichtviertel mit Godzilla-Kopf – stündliche Show 12–20 Uhr.', t: ['0¥', '🌙'], ll: [35.6952, 139.7034] },
+      { n: 'Omoide Yokocho (Memory Lane)', d: 'Enge Gassen mit winzigen Yakitori-Restaurants am Shinjuku Bahnhof.', t: ['🌙'], ll: [35.6931, 139.6997] },
+      { n: 'Shinjuku Gyoen Garten', d: 'Japanische, englische und französische Gärten. Ruhige Oase. Eintritt 500 ¥.', t: ['🎟'], ll: [35.6852, 139.7100] }
+    ],
+    tp: ['Shibuya Sky: Tickets UNBEDINGT vorab buchen – oft Tage vorher ausverkauft!', 'Shibuya & Shinjuku: nur 7 Min. mit der Yamanote-Linie – gute Tageskombi', 'Harajuku liegt dazwischen: Takeshita Str. (Kawaii) und Omotesando (Luxus)'] },
 
-  { k: 'hakone', e: '⛰️', n: 'Hakone', s: 'Fuji-Hakone-Izu Nationalpark', d: '25. – 26. Juli', ni: '1 Nacht', h: 'Guesthouse Azito', col: '#2a8a5e', cl: '#d5efe6', ll: [35.2329, 139.1069], ti: '🚆 Odakyu Romancecar ab Shinjuku: ~85 Min., ca. 2.500 ¥', nt: '🚆 Hakone → Odawara → Shinkansen → Kanazawa (~3.5h, JR Pass)', a: [
-    { n: 'Fuji-Ausblick (Owakudani)', d: 'Beste Chancen von Owakudani oder Hakone-en am See. Morgens früh ist am besten!', t: ['★', '0¥'], ll: [35.2558, 139.0220] },
-    { n: 'Hakone Seilbahn (Ropeway)', d: 'Fahrt über das Vulkangebiet Owakudani mit aktiven Schwefelquellen.', t: ['🎟'], ll: [35.2522, 139.0200] },
-    { n: 'Ashi-See Bootsfahrt', d: 'Bootsfahrt über den See mit Fuji-Kulisse. Bei klarem Wetter unvergesslich.', t: ['🎟'], ll: [35.2071, 139.0236] },
-    { n: 'Onsen-Erlebnis', d: 'Hakone ist Onsen-Hochburg Japans. Viele Hotels bieten Tagesnutzung an.', t: ['★'], ll: [35.2329, 139.1069] },
-    { n: 'Hakone Open Air Museum', d: 'Weitläufiges Freilichtmuseum mit Picasso-Sammlung und Skulpturen in Bergkulisse.', t: ['🎟'], ll: [35.2522, 139.0458] }
-  ], tp: ['Hakone Free Pass (~5.500 ¥ ab Odawara) deckt Seilbahn, Bus und Schiff ab', 'Fuji ist wetterabhängig – Morgen hat die besten Chancen', 'Onsen-Etikette: komplett nackt, vorher gründlich waschen, kein Schwimmen'] },
+  { k: 'hakone', e: '⛰️', n: 'Hakone', s: 'Fuji-Hakone-Izu Nationalpark',
+    d: '25. – 26. Juli', ni: '1 Nacht', h: 'Guesthouse Azito',
+    col: '#2a8a5e', cl: '#d5efe6', ll: [35.2329, 139.1069],
+    ti: '🚆 Odakyu Romancecar ab Shinjuku: ~85 Min., ca. 2.500 ¥',
+    nt: '🚆 Hakone → Odawara → Shinkansen → Kanazawa (~3.5h, JR Pass)',
+    a: [
+      { n: 'Fuji-Ausblick (Owakudani)', d: 'Beste Chancen von Owakudani oder Hakone-en am See. Morgens früh!', t: ['★', '0¥'], ll: [35.2558, 139.0220] },
+      { n: 'Hakone Seilbahn (Ropeway)', d: 'Fahrt über das Vulkangebiet Owakudani mit aktiven Schwefelquellen.', t: ['🎟'], ll: [35.2522, 139.0200] },
+      { n: 'Ashi-See Bootsfahrt', d: 'Bootsfahrt über den See mit Fuji-Kulisse. Bei klarem Wetter unvergesslich.', t: ['🎟'], ll: [35.2071, 139.0236] },
+      { n: 'Onsen-Erlebnis', d: 'Hakone ist Onsen-Hochburg Japans. Viele Hotels bieten Tagesnutzung an.', t: ['★'], ll: [35.2329, 139.1069] },
+      { n: 'Hakone Open Air Museum', d: 'Weitläufiges Freilichtmuseum mit Picasso-Sammlung in Bergkulisse.', t: ['🎟'], ll: [35.2522, 139.0458] }
+    ],
+    tp: ['Hakone Free Pass (~5.500 ¥ ab Odawara) deckt Seilbahn, Bus und Schiff', 'Fuji ist wetterabhängig – Morgen hat die besten Chancen', 'Onsen: komplett nackt, vorher gründlich waschen, kein Schwimmen'] },
 
-  { k: 'kanazawa', e: '🏯', n: 'Kanazawa', s: 'Das Kyoto des Nordens', d: '26. – 28. Juli', ni: '2 Nächte', h: 'HAOSTAY Hotel', col: '#b07d1a', cl: '#faebd7', ll: [36.5613, 136.6562], ti: '🚆 Shinkansen → Kanazawa (~3.5h, JR Pass)', nt: '🚌 Bus oder Zug → Matsumoto (~2.5–3h)', a: [
-    { n: 'Kenroku-en Garten', d: 'Einer der drei schönsten Gärten Japans. Teehaus, Teiche, alte Kiefern. Eintritt 320 ¥.', t: ['★', '🎟'], ll: [36.5624, 136.6605] },
-    { n: 'Higashi Chaya (Geisha-Viertel)', d: 'Gut erhaltenes altes Geisha-Viertel mit Teehäusern. Morgens fast menschenleer!', t: ['★', '0¥'], ll: [36.5701, 136.6625] },
-    { n: 'Kanazawa Burg', d: 'Imposante Burg direkt neben dem Kenroku-en. Gut als Kombi-Besuch.', t: ['0¥'], ll: [36.5640, 136.6566] },
-    { n: 'Samurai-Viertel Nagamachi', d: 'Authentisches Samurai-Wohnviertel mit Lehmwänden und Kanälen.', t: ['🎟'], ll: [36.5570, 136.6530] },
-    { n: 'Omicho Markt', d: 'Lebhafter Frischemarkt mit Meeresfrüchten. Sushi direkt vom Markt!', t: ['★', '0¥'], ll: [36.5762, 136.6499] }
-  ], tp: ['Kanazawa Machi Bus Tageskarte 500 ¥ – deckt alle wichtigen Spots ab', 'Goldblattprodukte sind Kanazawas Spezialität', 'Viel weniger Touristen als Kyoto!'] },
+  { k: 'kanazawa', e: '🏯', n: 'Kanazawa', s: 'Das Kyoto des Nordens',
+    d: '26. – 28. Juli', ni: '2 Nächte', h: 'HAOSTAY Hotel',
+    col: '#b07d1a', cl: '#faebd7', ll: [36.5613, 136.6562],
+    ti: '🚆 Shinkansen → Kanazawa (~3.5h, JR Pass)',
+    nt: '🚌 Bus oder Zug → Matsumoto (~2.5–3h)',
+    a: [
+      { n: 'Kenroku-en Garten', d: 'Einer der drei schönsten Gärten Japans. Teehaus, Teiche, Kiefern. 320 ¥.', t: ['★', '🎟'], ll: [36.5624, 136.6605] },
+      { n: 'Higashi Chaya (Geisha-Viertel)', d: 'Gut erhaltenes Geisha-Viertel. Morgens fast menschenleer!', t: ['★', '0¥'], ll: [36.5701, 136.6625] },
+      { n: 'Kanazawa Burg', d: 'Imposante Burg neben dem Kenroku-en. Gute Kombi.', t: ['0¥'], ll: [36.5640, 136.6566] },
+      { n: 'Samurai-Viertel Nagamachi', d: 'Authentisches Samurai-Wohnviertel mit Lehmwänden.', t: ['🎟'], ll: [36.5570, 136.6530] },
+      { n: 'Omicho Markt', d: 'Lebhafter Frischemarkt mit Meeresfrüchten. Sushi direkt vom Markt!', t: ['★', '0¥'], ll: [36.5762, 136.6499] }
+    ],
+    tp: ['Kanazawa Machi Bus Tageskarte 500 ¥ – deckt alle wichtigen Spots', 'Goldblattprodukte sind Kanazawas Spezialität', 'Viel weniger Touristen als Kyoto!'] },
 
-  { k: 'matsumoto', e: '🏔️', n: 'Matsumoto', s: 'Tor zu den Japanischen Alpen', d: '28. – 30. Juli', ni: '2 Nächte', h: 'Richmond Hotel Matsumoto', col: '#a03020', cl: '#f2d7d5', ll: [36.2380, 137.9721], ti: '🚌 Bus oder Zug Kanazawa → Matsumoto (~2.5–3h)', nt: '🚆 Matsumoto → Nagoya → Kyoto (JR Pass)', a: [
-    { n: 'Matsumoto-jo (Burg)', d: "Die 'Krähenburg' – eine der am besten erhaltenen Originalburgen Japans. Eintritt 700 ¥.", t: ['★', '🎟'], ll: [36.2383, 137.9688] },
-    { n: 'Kamikochi (Tagesausflug)', d: 'Alpines Hochtal auf 1.500m. Keine Privatautos erlaubt. Früh starten!', t: ['★', '🚌'], ll: [36.2472, 137.6493] },
-    { n: 'Nakamachi Straße', d: 'Historische Kaufmannsstraße mit Edo-zeitlichen Lagerhäusern.', t: ['0¥'], ll: [36.2340, 137.9710] },
-    { n: 'Nawate Straße', d: "Charmante Einkaufsstraße am Fluss mit 'Frosch'-Thema.", t: ['0¥'], ll: [36.2360, 137.9740] }
-  ], tp: ['Kamikochi: Bus ab Matsumoto Alpenbahn ~2.800 ¥ Hin/Rückfahrt – früh losfahren!', 'Matsumoto Soba (Buchweizennudeln) ist die lokale Spezialität', 'Burg + Altstadt lassen sich bequem zu Fuß erkunden'] },
+  { k: 'matsumoto', e: '🏔️', n: 'Matsumoto', s: 'Tor zu den Japanischen Alpen',
+    d: '28. – 30. Juli', ni: '2 Nächte', h: 'Richmond Hotel Matsumoto',
+    col: '#a03020', cl: '#f2d7d5', ll: [36.2380, 137.9721],
+    ti: '🚌 Bus oder Zug Kanazawa → Matsumoto (~2.5–3h)',
+    nt: '🚆 Matsumoto → Nagoya → Kyoto (JR Pass)',
+    a: [
+      { n: 'Matsumoto-jo (Burg)', d: "Die 'Krähenburg' – eine der am besten erhaltenen Originalburgen. 700 ¥.", t: ['★', '🎟'], ll: [36.2383, 137.9688] },
+      { n: 'Kamikochi (Tagesausflug)', d: 'Alpines Hochtal auf 1.500m. Keine Privatautos. Früh starten!', t: ['★', '🚌'], ll: [36.2472, 137.6493] },
+      { n: 'Nakamachi Straße', d: 'Historische Kaufmannsstraße mit Edo-zeitlichen Lagerhäusern.', t: ['0¥'], ll: [36.2340, 137.9710] },
+      { n: 'Nawate Straße', d: "Charmante Einkaufsstraße mit 'Frosch'-Thema.", t: ['0¥'], ll: [36.2360, 137.9740] }
+    ],
+    tp: ['Kamikochi: Bus ~2.800 ¥ Hin/Rückfahrt – früh losfahren!', 'Matsumoto Soba (Buchweizennudeln) ist die lokale Spezialität', 'Burg + Altstadt bequem zu Fuß erkundbar'] },
 
-  { k: 'kyoto', e: '⛩️', n: 'Kyoto', s: 'Alte Kaiserstadt', d: '30. Juli – 3. Aug.', ni: '4 Nächte', h: 'Travelodge Kyoto Shijo Omiya', col: '#6b3fa0', cl: '#e8daef', ll: [35.0116, 135.7681], ti: '🚆 Matsumoto → Nagoya → Kyoto (JR Pass)', nt: '🚆 Hankyu Kyoto Line → Osaka (~45 Min., 410 ¥)', a: [
-    { n: 'Fushimi Inari Taisha', d: 'Tausende orangefarbene Torii-Tore den Berg hinauf. VOR 8 Uhr besuchen!', t: ['★', '0¥'], ll: [34.9671, 135.7727] },
-    { n: 'Arashiyama Bambushain', d: 'Berühmter Bambuswald. Früh morgens (6–7 Uhr!) besuchen.', t: ['★', '0¥'], ll: [35.0094, 135.6721] },
-    { n: 'Kinkaku-ji (Goldener Pavillon)', d: 'Ikonischer vergoldeter Tempel am Teich. UNESCO-Welterbe. Eintritt 500 ¥.', t: ['★', '🎟'], ll: [35.0394, 135.7292] },
-    { n: 'Gion Viertel', d: 'Historisches Geishaviertel. Abendspaziergang Hanamikoji für Maiko-Sichtungen.', t: ['★', '0¥'], ll: [35.0037, 135.7765] },
-    { n: 'Nishiki Markt', d: "400 Jahre alter überdachter Markt – 'Kyotos Küche'. Probieren erlaubt!", t: ['★', '0¥'], ll: [35.0050, 135.7683] },
-    { n: 'Kiyomizu-dera Tempel', d: 'Spektakulärer Tempel auf Holzpfählen mit Ausblick über Kyoto. Eintritt 500 ¥.', t: ['★', '🎟'], ll: [34.9949, 135.7851] },
-    { n: "Philosopher's Path", d: 'Malerischer Kanal-Spazierweg zwischen Tempeln.', t: ['0¥'], ll: [35.0270, 135.7960] },
-    { n: 'Tagesausflug Nara', d: '45 Min. per Kintetsu-Bahn. Riesiger Bronzebuddha + freilaufende Rehe!', t: ['★', '🚌'], ll: [34.6851, 135.8048] }
-  ], tp: ['Kyoto Bus Tageskarte 700 ¥ – deckt fast alle Sehenswürdigkeiten ab', 'Fushimi Inari: VOR 8 Uhr! Mondlicht-Aufstieg abends auch möglich', 'Nara: Kintetsu Nara Line (45 Min., 760 ¥) ist schneller als JR'] },
+  { k: 'kyoto', e: '⛩️', n: 'Kyoto', s: 'Alte Kaiserstadt',
+    d: '30. Juli – 3. Aug.', ni: '4 Nächte', h: 'Travelodge Kyoto Shijo Omiya',
+    col: '#6b3fa0', cl: '#e8daef', ll: [35.0116, 135.7681],
+    ti: '🚆 Matsumoto → Nagoya → Kyoto (JR Pass)',
+    nt: '🚆 Hankyu Kyoto Line → Osaka (~45 Min., 410 ¥)',
+    a: [
+      { n: 'Fushimi Inari Taisha', d: 'Tausende orangefarbene Torii-Tore den Berg hinauf. VOR 8 Uhr!', t: ['★', '0¥'], ll: [34.9671, 135.7727] },
+      { n: 'Arashiyama Bambushain', d: 'Berühmter Bambuswald. Früh morgens (6–7 Uhr!) besuchen.', t: ['★', '0¥'], ll: [35.0094, 135.6721] },
+      { n: 'Kinkaku-ji (Goldener Pavillon)', d: 'Ikonischer vergoldeter Tempel am Teich. UNESCO-Welterbe. 500 ¥.', t: ['★', '🎟'], ll: [35.0394, 135.7292] },
+      { n: 'Gion Viertel', d: 'Historisches Geishaviertel. Abendspaziergang Hanamikoji für Maiko-Sichtungen.', t: ['★', '0¥'], ll: [35.0037, 135.7765] },
+      { n: 'Nishiki Markt', d: "400 Jahre alter überdachter Markt – 'Kyotos Küche'. Probieren!", t: ['★', '0¥'], ll: [35.0050, 135.7683] },
+      { n: 'Kiyomizu-dera Tempel', d: 'Spektakulärer Tempel auf Holzpfählen mit Stadtblick. 500 ¥.', t: ['★', '🎟'], ll: [34.9949, 135.7851] },
+      { n: "Philosopher's Path", d: 'Malerischer Kanal-Spazierweg zwischen Tempeln.', t: ['0¥'], ll: [35.0270, 135.7960] },
+      { n: 'Tagesausflug Nara', d: '45 Min. per Kintetsu-Bahn. Bronzebuddha + freilaufende Rehe!', t: ['★', '🚌'], ll: [34.6851, 135.8048] }
+    ],
+    tp: ['Kyoto Bus Tageskarte 700 ¥ – deckt fast alle Sehenswürdigkeiten', 'Fushimi Inari: VOR 8 Uhr! Mondlicht-Aufstieg abends auch möglich', 'Nara: Kintetsu Nara Line (45 Min., 760 ¥) ist schneller als JR'] },
 
-  { k: 'osaka', e: '🐙', n: 'Osaka', s: "Japans Küchen-Hauptstadt", d: '3. – 5. August', ni: '2 Nächte', h: 'APA Hotel Osaka Umeda Eki Tower', col: '#c0392b', cl: '#fadbd8', ll: [34.6937, 135.5023], ti: '🚆 Hankyu Kyoto Line (~45 Min., 410 ¥)', nt: null, a: [
-    { n: 'Dotonbori', d: 'Neon-Flussviertel mit riesigem Glico-Mann-Schild. Abends ein absolutes Muss!', t: ['★', '0¥', '🌙'], ll: [34.6687, 135.5013] },
-    { n: 'Takoyaki & Okonomiyaki', d: 'Osakas Streetfood: Kraken-Bällchen und herzhafter Pfannkuchen.', t: ['★'], ll: [34.6690, 135.5010] },
-    { n: 'Kuromon Ichiba Markt', d: "600m langer Frischemarkt – 'Osakas Küche'. Frühstück direkt am Stand.", t: ['★', '0¥'], ll: [34.6650, 135.5068] },
-    { n: 'Osaka-jo (Burg)', d: 'Beeindruckende Burg im großen Parkgelände. Park kostenlos.', t: ['🎟'], ll: [34.6873, 135.5259] },
-    { n: 'Shinsekai & Tsutenkaku', d: 'Retro-Viertel aus den 1920ern. Authentisches Osaka-Flair.', t: [], ll: [34.6527, 135.5063] },
-    { n: 'Umeda Sky Building', d: "'Floating Garden Observatory' in 170m Höhe. Abends besonders schön.", t: ['🎟', '🌙'], ll: [34.7051, 135.4941] }
-  ], tp: ['In Osaka stehen die Leute RECHTS auf Rolltreppen – anders als in Tokyo/Kyoto!', 'Tagesausflug Kobe: 30 Min. per JR/Hankyu – Kobe-Rind, Kitano-Viertel, Hafen', 'Osaka Amazing Pass (1–2 Tage) deckt viele Attraktionen + ÖPNV ab'] }
+  { k: 'osaka', e: '🐙', n: 'Osaka', s: "Japans Küchen-Hauptstadt",
+    d: '3. – 5. August', ni: '2 Nächte', h: 'APA Hotel Osaka Umeda Eki Tower',
+    col: '#c0392b', cl: '#fadbd8', ll: [34.6937, 135.5023],
+    ti: '🚆 Hankyu Kyoto Line (~45 Min., 410 ¥)', nt: null,
+    a: [
+      { n: 'Dotonbori', d: 'Neon-Flussviertel mit riesigem Glico-Mann-Schild. Abends ein Muss!', t: ['★', '0¥', '🌙'], ll: [34.6687, 135.5013] },
+      { n: 'Takoyaki & Okonomiyaki', d: 'Osakas Streetfood: Kraken-Bällchen und herzhafter Pfannkuchen.', t: ['★'], ll: [34.6690, 135.5010] },
+      { n: 'Kuromon Ichiba Markt', d: "600m Frischemarkt – 'Osakas Küche'. Frühstück am Stand.", t: ['★', '0¥'], ll: [34.6650, 135.5068] },
+      { n: 'Osaka-jo (Burg)', d: 'Beeindruckende Burg im großen Park. Park kostenlos.', t: ['🎟'], ll: [34.6873, 135.5259] },
+      { n: 'Shinsekai & Tsutenkaku', d: 'Retro-Viertel aus den 1920ern. Authentisches Osaka-Flair.', t: [], ll: [34.6527, 135.5063] },
+      { n: 'Umeda Sky Building', d: "'Floating Garden Observatory' in 170m. Abends besonders schön.", t: ['🎟', '🌙'], ll: [34.7051, 135.4941] }
+    ],
+    tp: ['In Osaka stehen die Leute RECHTS auf Rolltreppen – anders als Tokyo/Kyoto!', 'Tagesausflug Kobe: 30 Min. per JR/Hankyu – Kobe-Rind, Kitano-Viertel, Hafen', 'Osaka Amazing Pass (1–2 Tage) deckt viele Attraktionen + ÖPNV'] }
 ];
 
 var TAGS = {
-  '★': { bg: '#fce4ec', c: '#880e4f', lbl: '★ Highlight' },
+  '★':  { bg: '#fce4ec', c: '#880e4f', lbl: '★ Highlight' },
   '0¥': { bg: '#e8f5e9', c: '#2e7d32', lbl: 'Kostenlos' },
   '🎟': { bg: '#fff3e0', c: '#bf360c', lbl: 'Eintritt' },
   '🌙': { bg: '#ede7f6', c: '#4527a0', lbl: 'Abends' },
@@ -374,32 +521,47 @@ var TAGS = {
   '📅': { bg: '#fff8e1', c: '#f57f17', lbl: 'Vorab buchen' }
 };
 
+// ═══════════════════════════════════════════════════════════════
+// Info Cards
+// ═══════════════════════════════════════════════════════════════
 var INFO = [
   { i: '🚆', t: 'JR Pass', l: ['Vorab kaufen (7 oder 14 Tage)', 'Gilt für Shinkansen (außer Nozomi)', 'Am Flughafen oder großem Bahnhof aktivieren', 'Suica/Pasmo IC-Card extra für U-Bahn & Busse'] },
-  { i: '💴', t: 'Geld', l: ['Japan ist überwiegend Bargeldgesellschaft!', '7-Eleven / Post-ATM akzeptieren Maestro/Visa', 'Trinkgeld ist unüblich – nicht geben', 'IC-Card (Suica) laden für alle Züge & Busse'] },
+  { i: '💴', t: 'Geld & Bezahlen', l: ['Japan ist überwiegend Bargeldgesellschaft!', '7-Eleven / Post-ATM akzeptieren Maestro/Visa', 'Trinkgeld ist unüblich – nicht geben', 'IC-Card (Suica) laden für alle Züge & Busse'] },
   { i: '📱', t: 'Internet unterwegs', l: ['Pocket-WLAN oder SIM am Flughafen kaufen', 'Google Maps offline für alle Städte speichern', 'Google Translate App + JP-Paket offline laden'] },
   { i: '☀️', t: 'Juli/August – Wetter', l: ['Sehr heiß und humid: 32–36°C möglich', 'Leichte Kleidung + Sonnencreme Pflicht', 'Kühlsprays & Handtücher überall kaufbar', 'Beliebte Orte früh morgens besuchen!'] },
   { i: '🎌', t: 'Etikette', l: ['Tempel: leise, respektvoll, Schuhe ausziehen', 'Links stehen auf Rolltreppen (Osaka: rechts!)', 'Kaum Mülleimer – Müll immer mitnehmen', 'Fotos in Tempeln: Schilder beachten'] },
   { i: '🆘', t: 'Notfall', l: ['Polizei: 110 · Feuerwehr/Notarzt: 119', 'Tourist Info Tokyo: +81-3-3201-3331', 'Deutsche Botschaft Tokyo: +81-3-5791-7700'] }
 ];
 
-// ─── Nav ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Navigation
+// ═══════════════════════════════════════════════════════════════
 var curMain = 'reise';
+var SECTIONS = ['reise', 'map', 'cur', 'ph', 'info'];
+
 function showMain(sec) {
-  ['reise', 'cur', 'ph', 'info', 'map'].forEach(function (s) {
+  SECTIONS.forEach(function (s) {
     document.getElementById('v-' + s).classList.toggle('show', s === sec);
     document.getElementById('nb-' + s).classList.toggle('on', s === sec);
   });
-  document.getElementById('city-tabs-bar').classList.toggle('hidden', sec !== 'reise');
+  document.getElementById('city-tabs').classList.toggle('hidden', sec !== 'reise');
   curMain = sec;
-  if (sec === 'map') { initMap(); } else { window.scrollTo(0, 0); }
+  if (sec === 'map') {
+    initMap();
+  } else {
+    window.scrollTo(0, 0);
+  }
 }
 
-// ─── City Tabs ────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// City Tabs
+// ═══════════════════════════════════════════════════════════════
 (function () {
-  var bar = document.getElementById('city-tabs-bar');
-  var h = '<button class="ctab on" id="ct-ov" onclick="showOV()">Übersicht</button>';
-  C.forEach(function (c) { h += '<button class="ctab" id="ct-' + c.k + '" onclick="openCity(\'' + c.k + '\')">' + c.e + ' ' + c.n + '</button>'; });
+  var bar = document.getElementById('city-tabs');
+  var h = '<button class="ctab on" id="ct-ov" onclick="showOV()" role="tab" aria-selected="true">Übersicht</button>';
+  C.forEach(function (c) {
+    h += '<button class="ctab" id="ct-' + c.k + '" onclick="openCity(\'' + c.k + '\')" role="tab" aria-selected="false">' + c.e + ' ' + c.n + '</button>';
+  });
   bar.innerHTML = h;
   bar.classList.remove('hidden');
 })();
@@ -407,25 +569,32 @@ function showMain(sec) {
 function showOV() {
   document.getElementById('v-ov').classList.remove('hidden');
   document.getElementById('v-ci').classList.add('hidden');
-  document.querySelectorAll('.ctab').forEach(function (t) { t.classList.remove('on'); });
-  document.getElementById('ct-ov').classList.add('on');
+  document.querySelectorAll('.ctab').forEach(function (t) {
+    t.classList.remove('on');
+    t.setAttribute('aria-selected', 'false');
+  });
+  var ov = document.getElementById('ct-ov');
+  ov.classList.add('on');
+  ov.setAttribute('aria-selected', 'true');
   window.scrollTo(0, 0);
 }
 
-// ─── Overview ────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Overview
+// ═══════════════════════════════════════════════════════════════
 (function () {
   var el = document.getElementById('v-ov');
-  var h = '<div class="intro-banner">Tippe auf eine Stadt für Details zu Sehenswürdigkeiten, Transfers und Tipps.</div>';
+  var h = '<div class="intro-banner">Tippe auf eine Stadt für Details, Sehenswürdigkeiten und Insider-Tipps.</div>';
   C.forEach(function (c) {
     if (c.ti) {
       h += '<div class="transit-row"><div class="transit-line"></div><div class="transit-text">' + c.ti + '</div></div>';
     }
-    h += '<div class="city-card" onclick="openCity(\'' + c.k + '\')">' +
-      '<div class="city-dot" style="background:' + c.cl + '">' + c.e + '</div>' +
+    h += '<div class="city-card" onclick="openCity(\'' + c.k + '\')" role="button" tabindex="0">' +
+      '<div class="city-dot" style="background:' + c.cl + '" aria-hidden="true">' + c.e + '</div>' +
       '<div class="city-info">' +
-      '<div class="city-name">' + c.n + '</div>' +
-      '<div class="city-dates">' + c.d + '</div>' +
-      '<div class="city-hotel">🏨 ' + c.h + '</div>' +
+        '<div class="city-name">' + c.n + '</div>' +
+        '<div class="city-dates">' + c.d + '</div>' +
+        '<div class="city-hotel">🏨 ' + c.h + '</div>' +
       '</div>' +
       '<div class="city-badge" style="background:' + c.cl + ';color:' + c.col + '">' + c.ni + '</div>' +
       '</div>';
@@ -433,7 +602,9 @@ function showOV() {
   el.innerHTML = h;
 })();
 
-// ─── City Detail ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// City Detail
+// ═══════════════════════════════════════════════════════════════
 function openCity(k) {
   var c = C.find(function (x) { return x.k === k; });
   var att = c.a.map(function (a) {
@@ -441,82 +612,79 @@ function openCity(k) {
       var s = TAGS[t] || { bg: '#eee', c: '#555', lbl: t };
       return '<span class="tag" style="background:' + s.bg + ';color:' + s.c + '">' + s.lbl + '</span>';
     }).join('');
-    return '<div class="att-card"><div class="att-name">' + a.n + '</div><div class="att-desc">' + a.d + '</div>' + (tg ? '<div class="tags">' + tg + '</div>' : '') + '</div>';
+    return '<div class="att-card"><div class="att-name">' + a.n + '</div>' +
+      '<div class="att-desc">' + a.d + '</div>' +
+      (tg ? '<div class="tags">' + tg + '</div>' : '') + '</div>';
   }).join('');
+
   var tips = c.tp.map(function (t) { return '<div class="tip-card">💡 ' + t + '</div>'; }).join('');
-  var tin = c.ti ? '<div class="sec"><div class="sec-hd">🚆 Anreise</div><div class="transit-card">' + c.ti + '</div></div>' : '';
+  var tin  = c.ti ? '<div class="sec"><div class="sec-hd">🚆 Anreise</div><div class="transit-card">' + c.ti + '</div></div>' : '';
   var tout = c.nt ? '<div class="sec"><div class="sec-hd">🚆 Weiterreise</div><div class="transit-card">' + c.nt + '</div></div>' : '';
-  var ci = document.getElementById('v-ci');
-  ci.innerHTML =
-    '<div class="back-btn" onclick="showOV()">← Übersicht</div>' +
+
+  document.getElementById('v-ci').innerHTML =
+    '<button class="back-btn" onclick="showOV()" aria-label="Zurück zur Übersicht">← Übersicht</button>' +
     '<div class="city-hero" style="background:' + c.col + '">' +
-    '<div class="hero-emoji">' + c.e + '</div>' +
-    '<div class="hero-name">' + c.n + '</div>' +
-    '<div class="hero-sub">' + c.s + '</div>' +
-    '<div class="hero-dates">' + c.d + ' · ' + c.ni + '</div>' +
-    '<div class="hero-hotel">🏨 ' + c.h + '</div></div>' +
+      '<div class="hero-emoji" aria-hidden="true">' + c.e + '</div>' +
+      '<div class="hero-name">' + c.n + '</div>' +
+      '<div class="hero-sub">' + c.s + '</div>' +
+      '<div class="hero-dates">' + c.d + ' · ' + c.ni + '</div>' +
+      '<div class="hero-hotel">🏨 ' + c.h + '</div>' +
+    '</div>' +
     tin +
     '<div class="sec"><div class="sec-hd">⭐ Sehenswürdigkeiten</div>' + att + '</div>' +
     '<div class="sec"><div class="sec-hd">💡 Insider-Tipps</div>' + tips + '</div>' +
     tout;
+
   document.getElementById('v-ov').classList.add('hidden');
-  ci.classList.remove('hidden');
-  document.querySelectorAll('.ctab').forEach(function (t) { t.classList.remove('on'); });
+  document.getElementById('v-ci').classList.remove('hidden');
+  document.querySelectorAll('.ctab').forEach(function (t) {
+    t.classList.remove('on');
+    t.setAttribute('aria-selected', 'false');
+  });
   var tab = document.getElementById('ct-' + k);
-  if (tab) tab.classList.add('on');
+  if (tab) { tab.classList.add('on'); tab.setAttribute('aria-selected', 'true'); }
   window.scrollTo(0, 0);
 }
 
-// ─── Info ────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Info Cards
+// ═══════════════════════════════════════════════════════════════
 (function () {
   document.getElementById('v-info-content').innerHTML = INFO.map(function (b) {
-    return '<div class="info-card"><div class="info-title">' + b.i + ' ' + b.t + '</div><ul class="info-list">' +
-      b.l.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>';
+    return '<div class="info-card"><div class="info-title">' + b.i + ' ' + b.t + '</div>' +
+      '<ul class="info-list">' + b.l.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>';
   }).join('');
 })();
 
-// ─── Currency ────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Currency
+// ═══════════════════════════════════════════════════════════════
 var RATE = 168;
-var quickAmounts = [10, 20, 50, 100];
-var refs = [
-  [3, 500, 'Kaffee / Snack'],
-  [5, 900, 'Ramen / Udon'],
-  [9, 1500, 'Sushi-Set'],
-  [18, 3000, 'Restaurant-Abend'],
-  [6, 1000, 'Aktivität / Museum'],
-  [60, 10000, 'Tages-Budget']
-];
-
 (function () {
-  document.getElementById('quick-row').innerHTML = quickAmounts.map(function (v) {
-    return '<button class="quick-btn" onclick="qc(' + v + ')">' + v + ' CHF</button>';
+  document.getElementById('quick-row').innerHTML = [10, 20, 50, 100].map(function (v) {
+    return '<button class="quick-btn" onclick="qc(' + v + ')" aria-label="' + v + ' CHF umrechnen">' + v + ' CHF</button>';
   }).join('');
-  document.getElementById('ref-card').innerHTML =
-    '<div class="ref-hd">Typische Kosten</div>' +
+
+  var refs = [[3,'Kaffee / Snack'],[5,'Ramen / Udon'],[9,'Sushi-Set'],[18,'Restaurant-Abend'],[6,'Aktivität'],[60,'Tages-Budget']];
+  document.getElementById('ref-card').innerHTML = '<div class="ref-hd">Typische Kosten</div>' +
     refs.map(function (r) {
-      return '<div class="ref-row"><span class="ref-label">' + r[2] + '</span><span class="ref-val">~' + r[0] + ' CHF · ' + r[1].toLocaleString('de') + ' ¥</span></div>';
+      return '<div class="ref-row"><span class="ref-label">' + r[1] + '</span>' +
+        '<span class="ref-val">~' + r[0] + ' CHF · ' + (r[0] * RATE).toLocaleString('de') + ' ¥</span></div>';
     }).join('');
 })();
 
-function cvCHF() {
-  var v = parseFloat(document.getElementById('chf-i').value);
-  document.getElementById('jpy-i').value = isNaN(v) ? '' : Math.round(v * RATE);
-}
-function cvJPY() {
-  var v = parseFloat(document.getElementById('jpy-i').value);
-  document.getElementById('chf-i').value = isNaN(v) ? '' : (v / RATE).toFixed(2);
-}
-function qc(chf) {
-  document.getElementById('chf-i').value = chf;
-  document.getElementById('jpy-i').value = Math.round(chf * RATE);
-}
+function cvCHF() { var v = parseFloat(document.getElementById('chf-i').value); document.getElementById('jpy-i').value = isNaN(v) ? '' : Math.round(v * RATE); }
+function cvJPY() { var v = parseFloat(document.getElementById('jpy-i').value); document.getElementById('chf-i').value = isNaN(v) ? '' : (v / RATE).toFixed(2); }
+function qc(chf) { document.getElementById('chf-i').value = chf; document.getElementById('jpy-i').value = Math.round(chf * RATE); }
 function swapCur() {
   var a = document.getElementById('chf-i').value, b = document.getElementById('jpy-i').value;
   document.getElementById('chf-i').value = b ? (parseFloat(b) / RATE).toFixed(2) : '';
   document.getElementById('jpy-i').value = a ? Math.round(parseFloat(a) * RATE) : '';
 }
 
-// ─── Phrases ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Phrases + Speech
+// ═══════════════════════════════════════════════════════════════
 var PH = [
   { cat: 'Begrüßung & Basics', ph: [
     { de: 'Danke schön', jp: 'ありがとうございます', rm: 'Arigatō gozaimasu' },
@@ -526,17 +694,17 @@ var PH = [
     { de: 'Auf Wiedersehen', jp: 'さようなら', rm: 'Sayōnara' },
     { de: 'Ja / Nein', jp: 'はい / いいえ', rm: 'Hai / Iie' },
     { de: 'Ich verstehe nicht', jp: 'わかりません', rm: 'Wakarimasen' },
-    { de: 'Sprechen Sie Englisch?', jp: '英語を話せますか？', rm: 'Eigo o hanasemasu ka?' },
+    { de: 'Sprechen Sie Englisch?', jp: '英語を話せますか？', rm: 'Eigo o hanasemasu ka?' }
   ]},
   { cat: 'Restaurant & Essen', ph: [
-    { de: 'Guten Appetit (vor dem Essen)', jp: 'いただきます', rm: 'Itadakimasu' },
+    { de: 'Guten Appetit', jp: 'いただきます', rm: 'Itadakimasu' },
     { de: 'Das war lecker!', jp: 'おいしかった！', rm: 'Oishikatta!' },
     { de: 'Die Rechnung bitte', jp: 'お会計をお願いします', rm: 'Okaikei o onegaishimasu' },
     { de: 'Ein Tisch für zwei', jp: '二人席をお願いします', rm: 'Futari seki o onegaishimasu' },
     { de: 'Was empfehlen Sie?', jp: 'おすすめは何ですか？', rm: 'Osusume wa nan desu ka?' },
     { de: 'Ein Bier bitte', jp: 'ビールを一つください', rm: 'Bīru o hitotsu kudasai' },
     { de: 'Ohne Fleisch bitte', jp: 'お肉なしでお願いします', rm: 'Oniku nashi de onegaishimasu' },
-    { de: 'Vegetarisch bitte', jp: 'ベジタリアン料理はありますか？', rm: 'Bejitarian ryōri wa arimasu ka?' },
+    { de: 'Vegetarisch?', jp: 'ベジタリアン料理はありますか？', rm: 'Bejitarian ryōri wa arimasu ka?' }
   ]},
   { cat: 'Transport', ph: [
     { de: 'Wo ist der Bahnhof?', jp: '駅はどこですか？', rm: 'Eki wa doko desu ka?' },
@@ -544,7 +712,7 @@ var PH = [
     { de: 'Zum Flughafen bitte', jp: '空港までお願いします', rm: 'Kūkō made onegaishimasu' },
     { de: 'Hier aussteigen bitte', jp: 'ここで降ります', rm: 'Koko de orimasu' },
     { de: 'Nächste Station?', jp: '次の駅はどこですか？', rm: 'Tsugi no eki wa doko desu ka?' },
-    { de: 'Wo ist die U-Bahn?', jp: '地下鉄はどこですか？', rm: 'Chikatetsu wa doko desu ka?' },
+    { de: 'Wo ist die U-Bahn?', jp: '地下鉄はどこですか？', rm: 'Chikatetsu wa doko desu ka?' }
   ]},
   { cat: 'Shopping', ph: [
     { de: 'Wie viel kostet das?', jp: 'これはいくらですか？', rm: 'Kore wa ikura desu ka?' },
@@ -552,7 +720,7 @@ var PH = [
     { de: 'Ich schaue nur', jp: '見ているだけです', rm: 'Mite iru dake desu' },
     { de: 'Ich nehme das', jp: 'これをください', rm: 'Kore o kudasai' },
     { de: 'Haben Sie eine Tüte?', jp: '袋はありますか？', rm: 'Fukuro wa arimasu ka?' },
-    { de: 'Haben Sie das auch kleiner?', jp: '小さいサイズはありますか？', rm: 'Chīsai saizu wa arimasu ka?' },
+    { de: 'Kleiner?', jp: '小さいサイズはありますか？', rm: 'Chīsai saizu wa arimasu ka?' }
   ]},
   { cat: 'Notfall', ph: [
     { de: 'Hilfe!', jp: '助けて！', rm: 'Tasukete!' },
@@ -560,40 +728,30 @@ var PH = [
     { de: 'Ich brauche ein Krankenhaus', jp: '病院が必要です', rm: 'Byōin ga hitsuyō desu' },
     { de: 'Ich bin verloren', jp: '迷子になりました', rm: 'Maigo ni narimashita' },
     { de: 'Polizei rufen!', jp: '警察を呼んでください！', rm: 'Keisatsu o yonde kudasai!' },
-    { de: 'Polizei 110 · Notarzt 119', jp: '警察：110 · 救急：119', rm: 'Keisatsu: 110 · Kyūkyū: 119' },
+    { de: 'Polizei 110 · Notarzt 119', jp: '警察：110 · 救急：119', rm: 'Keisatsu: 110 · Kyūkyū: 119' }
   ]}
 ];
 
-// Speech
 var synth = window.speechSynthesis;
-var curUtter = null;
 var curBtn = null;
 
 function speak(text, btn) {
-  if (synth.speaking) { synth.cancel(); }
+  if (synth.speaking) synth.cancel();
   if (curBtn && curBtn !== btn) { curBtn.classList.remove('playing'); curBtn.textContent = '🔊'; }
   if (curBtn === btn && !synth.speaking) { curBtn = null; return; }
   var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP';
-  u.rate = 0.8;
-  u.pitch = 1.0;
-  btn.classList.add('playing');
-  btn.textContent = '⏸';
-  curBtn = btn;
-  curUtter = u;
-  u.onend = u.onerror = function () {
-    btn.classList.remove('playing');
-    btn.textContent = '🔊';
-    curBtn = null;
-  };
+  u.lang = 'ja-JP'; u.rate = 0.8; u.pitch = 1.0;
+  btn.classList.add('playing'); btn.textContent = '⏸'; curBtn = btn;
+  u.onend = u.onerror = function () { btn.classList.remove('playing'); btn.textContent = '🔊'; curBtn = null; };
   synth.speak(u);
+  if (navigator.vibrate) navigator.vibrate(8);
 }
 
 function copyTxt(text, btn) {
   var done = function () {
-    btn.textContent = '✓';
-    btn.classList.add('copied');
-    setTimeout(function () { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1400);
+    btn.textContent = '✓'; btn.classList.add('copied');
+    if (navigator.vibrate) navigator.vibrate(10);
+    setTimeout(function () { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
   };
   if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done).catch(done); }
   else { try { var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); } catch (e) {} done(); }
@@ -601,21 +759,21 @@ function copyTxt(text, btn) {
 
 function renderPH(list) {
   var el = document.getElementById('ph-list');
-  if (!list.length) { el.innerHTML = '<div class="no-results">🔍 Keine Treffer gefunden</div>'; return; }
+  if (!list.length) { el.innerHTML = '<div class="no-results">Keine Treffer – probiere einen anderen Begriff</div>'; return; }
   var html = '';
   list.forEach(function (item, idx) {
     if (item.isHd) { html += '<div class="ph-cat-hd">' + item.cat + '</div>'; return; }
     var id = 'ph' + idx;
-    var jp = item.jp.replace(/'/g, "\\'");
-    html += '<div class="ph-card">' +
+    var jp = item.jp.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    html += '<div class="ph-card" role="listitem">' +
       '<div class="ph-texts">' +
-      '<div class="ph-de">' + item.de + '</div>' +
-      '<div class="ph-jp">' + item.jp + '</div>' +
-      '<div class="ph-rm">' + item.rm + '</div>' +
+        '<div class="ph-de">' + item.de + '</div>' +
+        '<div class="ph-jp">' + item.jp + '</div>' +
+        '<div class="ph-rm">' + item.rm + '</div>' +
       '</div>' +
       '<div class="ph-actions">' +
-      '<button class="play-btn" id="pb' + id + '" onclick="speak(\'' + jp + '\',this)" title="Abspielen">🔊</button>' +
-      '<button class="copy-btn" id="cb' + id + '" onclick="copyTxt(\'' + jp + '\',this)" title="Kopieren">📋</button>' +
+        '<button class="play-btn" id="pb' + id + '" onclick="speak(\'' + jp + '\',this)" aria-label="' + item.de + ' auf Japanisch abspielen">🔊</button>' +
+        '<button class="copy-btn" id="cb' + id + '" onclick="copyTxt(\'' + jp + '\',this)" aria-label="Japanischen Text kopieren">📋</button>' +
       '</div>' +
       '</div>';
   });
@@ -637,37 +795,38 @@ function buildPHList(q) {
   });
   return items;
 }
-
 renderPH(buildPHList(''));
 
 function filterPh() {
   var q = document.getElementById('search-inp').value.trim();
-  var clr = document.getElementById('search-clear');
-  clr.style.display = q ? 'flex' : 'none';
+  document.getElementById('search-clear').style.display = q ? 'flex' : 'none';
   if (synth.speaking) { synth.cancel(); if (curBtn) { curBtn.classList.remove('playing'); curBtn.textContent = '🔊'; curBtn = null; } }
   renderPH(buildPHList(q));
 }
-
 function clearSearch() {
   document.getElementById('search-inp').value = '';
   document.getElementById('search-clear').style.display = 'none';
   renderPH(buildPHList(''));
 }
 
-// ─── PWA ─────────────────────────────────────────────────────────────────────
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-</script>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-// ─── Map ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// Map (Leaflet)
+// ═══════════════════════════════════════════════════════════════
 var mapObj = null;
+var tileLayer = null;
+
+var TILE_LIGHT = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+var TILE_DARK  = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+var TILE_ATTR  = '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>';
+
+function addTiles() {
+  return L.tileLayer(dm ? TILE_DARK : TILE_LIGHT, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(mapObj);
+}
 
 function resizeMap() {
   var hdr = document.getElementById('hdr').offsetHeight;
   var nav = document.querySelector('.nav').offsetHeight;
-  var el = document.getElementById('map-el');
-  el.style.height = (window.innerHeight - hdr - nav) + 'px';
+  document.getElementById('map-el').style.height = (window.innerHeight - hdr - nav) + 'px';
   if (mapObj) mapObj.invalidateSize();
 }
 
@@ -677,77 +836,70 @@ function initMap() {
 
   mapObj = L.map('map-el', { zoomControl: false, tap: false });
   L.control.zoom({ position: 'topright' }).addTo(mapObj);
-
-  // Tile layer – OpenStreetMap
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 19
-  }).addTo(mapObj);
+  tileLayer = addTiles();
 
   // Route line
-  L.polyline(C.map(function(c) { return c.ll; }), {
-    color: '#b5001f', weight: 2.5, dashArray: '7,10', opacity: 0.65
+  L.polyline(C.map(function (c) { return c.ll; }), {
+    color: '#b5001f', weight: 2.5, dashArray: '7,10', opacity: 0.7
   }).addTo(mapObj);
 
-  // Attraction layer (shown when zoomed in)
+  // Attraction layer (visible at zoom >= 11)
   var attLayer = L.layerGroup().addTo(mapObj);
 
-  C.forEach(function(c) {
-    // City circle marker
-    var cm = L.circleMarker(c.ll, {
-      radius: 13, fillColor: c.col, color: '#fff',
-      weight: 2.5, fillOpacity: 0.93
-    }).addTo(mapObj);
+  C.forEach(function (c) {
+    // City circle
+    var cm = L.circleMarker(c.ll, { radius: 13, fillColor: c.col, color: '#fff', weight: 2.5, fillOpacity: 0.93 }).addTo(mapObj);
 
-    // Floating city label
+    // City label chip
     L.marker(c.ll, {
       icon: L.divIcon({
-        html: '<div style="background:' + c.col + ';color:#fff;border-radius:14px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3);margin-left:18px;margin-top:-8px">' + c.e + ' ' + c.n + '</div>',
+        html: '<div style="background:' + c.col + ';color:#fff;border-radius:14px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3);margin-left:20px;margin-top:-9px">' + c.e + ' ' + c.n + '</div>',
         className: '', iconAnchor: [0, 0]
       })
     }).addTo(mapObj);
 
-    // City popup
+    // City popup – correct navigation handler
     cm.bindPopup(
-      '<div style="min-width:170px;font-family:-apple-system,sans-serif">' +
+      '<div style="min-width:175px;font-family:-apple-system,sans-serif">' +
       '<div style="font-size:15px;font-weight:700;margin-bottom:3px">' + c.e + ' ' + c.n + '</div>' +
       '<div style="font-size:11px;color:#666;margin-bottom:2px">📅 ' + c.d + ' · ' + c.ni + '</div>' +
       '<div style="font-size:11px;color:#888;margin-bottom:10px">🏨 ' + c.h + '</div>' +
-      '<button class="map-popup-btn" onclick="document.querySelector(\'.nav-btn\').click();openCity(\'' + c.k + '\');showMain(\'reise\')">Details ansehen →</button>' +
+      '<button class="map-popup-btn" onclick="showMain(\'reise\');openCity(\'' + c.k + '\')">Details ansehen →</button>' +
       '</div>'
     );
 
-    // Attraction markers
-    c.a.forEach(function(a) {
+    // Attraction pins
+    c.a.forEach(function (a) {
       if (!a.ll) return;
-      var isHi = a.t.indexOf('★') >= 0;
+      var hi = a.t.indexOf('★') >= 0;
       L.circleMarker(a.ll, {
-        radius: isHi ? 7 : 5,
-        fillColor: isHi ? '#e91e63' : '#607d8b',
-        color: '#fff', weight: 1.5, fillOpacity: 0
+        radius: hi ? 7 : 5, fillColor: hi ? '#e91e63' : '#607d8b',
+        color: '#fff', weight: 1.5, fillOpacity: 0, opacity: 0
       }).addTo(attLayer).bindPopup(
         '<div style="font-family:-apple-system,sans-serif">' +
         '<div style="font-size:12px;font-weight:700;margin-bottom:3px">' + a.n + '</div>' +
-        '<div style="font-size:11px;color:#555;line-height:1.5">' + a.d + '</div>' +
-        '</div>'
+        '<div style="font-size:11px;color:#555;line-height:1.5">' + a.d + '</div></div>'
       );
     });
   });
 
-  // Show/hide attraction pins based on zoom
   function updateAttVis() {
     var z = mapObj.getZoom();
-    attLayer.eachLayer(function(l) {
-      l.setStyle({ fillOpacity: z >= 11 ? (l.options.fillColor === '#e91e63' ? 0.9 : 0.7) : 0, opacity: z >= 11 ? 1 : 0 });
+    var show = z >= 11;
+    attLayer.eachLayer(function (l) {
+      l.setStyle({ fillOpacity: show ? (l.options.fillColor === '#e91e63' ? 0.9 : 0.7) : 0, opacity: show ? 1 : 0 });
     });
   }
   mapObj.on('zoomend', updateAttVis);
-
-  // Fit all cities
-  mapObj.fitBounds(L.latLngBounds(C.map(function(c) { return c.ll; })), { padding: [40, 40] });
+  mapObj.fitBounds(L.latLngBounds(C.map(function (c) { return c.ll; })), { padding: [40, 40] });
 }
 
-window.addEventListener('resize', function() { if (curMain === 'map') resizeMap(); });
+window.addEventListener('resize', function () { if (curMain === 'map') resizeMap(); });
+
+// ═══════════════════════════════════════════════════════════════
+// PWA
+// ═══════════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 </script>
 </body>
 </html>
