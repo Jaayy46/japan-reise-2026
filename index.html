@@ -287,40 +287,34 @@ button { touch-action: manipulation; }
 
 /* Add-note sticky */
 .sticky-compose {
-  background: #fef9c3; border-radius: 3px;
-  box-shadow: 2px 3px 10px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.1);
+  background: #fef08a; border-radius: 3px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,.22), 0 1px 2px rgba(0,0,0,.1);
   padding: 14px 14px 12px; margin-bottom: 18px; position: relative;
 }
-[data-dark] .sticky-compose { background: #3a3500; }
 .sticky-pin {
   width: 14px; height: 14px; background: #c0392b; border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0,0,0,.35); margin: -4px auto 10px;
 }
 .sticky-name-inp {
-  width: 100%; background: transparent; border: none; border-bottom: 1.5px solid rgba(0,0,0,.15);
-  padding: 4px 0 6px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,.65);
+  width: 100%; background: transparent; border: none; border-bottom: 1.5px solid rgba(0,0,0,.2);
+  padding: 4px 0 6px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,.7);
   font-family: inherit; outline: none; margin-bottom: 10px;
 }
-[data-dark] .sticky-name-inp { color: rgba(255,255,255,.7); border-bottom-color: rgba(255,255,255,.2); }
 .sticky-name-inp::placeholder { color: rgba(0,0,0,.35); }
-[data-dark] .sticky-name-inp::placeholder { color: rgba(255,255,255,.3); }
 .sticky-textarea {
   width: 100%; background: transparent; border: none; font-size: 14px; line-height: 1.7;
   color: rgba(0,0,0,.75); font-family: inherit; outline: none; resize: none;
   min-height: 72px; padding: 0;
 }
-[data-dark] .sticky-textarea { color: rgba(255,255,255,.8); }
-.sticky-textarea::placeholder { color: rgba(0,0,0,.3); }
-[data-dark] .sticky-textarea::placeholder { color: rgba(255,255,255,.3); }
+.sticky-textarea::placeholder { color: rgba(0,0,0,.35); }
 .sticky-send-btn {
-  width: 100%; background: rgba(0,0,0,.08); border: none; border-radius: 6px;
-  padding: 9px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,.6);
+  width: 100%; background: rgba(0,0,0,.1); border: none; border-radius: 6px;
+  padding: 9px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,.65);
   cursor: pointer; margin-top: 10px; font-family: inherit; touch-action: manipulation;
   min-height: 40px; transition: background .15s;
 }
-[data-dark] .sticky-send-btn { background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); }
 .sticky-send-btn:disabled { opacity: .4; }
-.sticky-send-btn:active { background: rgba(0,0,0,.15); }
+.sticky-send-btn:active { background: rgba(0,0,0,.18); }
 
 /* Note grid */
 .notes-grid { columns: 2; column-gap: 10px; }
@@ -1039,14 +1033,12 @@ function initNotes() {
   }, 20000);
 }
 
-var STICKY_COLORS = ['#fef9c3','#fce7f3','#dbeafe','#dcfce7','#ffedd5','#ede9fe'];
-var STICKY_COLORS_DK = ['#3a3500','#3a0a20','#0a1a3a','#0a2a14','#2a1500','#1a1030'];
+var STICKY_COLORS = ['#fef08a','#f9a8d4','#93c5fd','#86efac','#fdba74','#c4b5fd'];
 
 function stickyColor(id) {
   var h = 0;
   for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0xffff;
-  var idx = h % STICKY_COLORS.length;
-  return document.documentElement.hasAttribute('data-dark') ? STICKY_COLORS_DK[idx] : STICKY_COLORS[idx];
+  return STICKY_COLORS[h % STICKY_COLORS.length];
 }
 
 function renderNotesShell(creds) {
