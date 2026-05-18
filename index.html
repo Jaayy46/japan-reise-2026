@@ -1005,6 +1005,8 @@ window.addEventListener('resize', function () { if (curMain === 'map') resizeMap
 // Notes – JSONBin.io REST (kein Code-Editieren nötig)
 // ═══════════════════════════════════════════════════════════════
 var JB_BASE = 'https://api.jsonbin.io/v3/b/';
+var JB_BIN  = '6a0ab1b7c0954111d83d5a8e';
+var JB_KEY  = '$2a$10$C3e0SSQnFmDclZu7VI2iQulahkWQKMI6ub1ftEyUiLFR5kXSYR6Gm';
 
 var notesInitialized = false;
 var notesPoll = null;
@@ -1016,16 +1018,14 @@ function escHtml(s) {
 }
 
 function getJBCreds() {
-  return { binId: localStorage.getItem('jb-bin') || '', key: localStorage.getItem('jb-key') || '' };
+  return { binId: JB_BIN, key: JB_KEY };
 }
 
 function initNotes() {
-  var creds = getJBCreds();
   if (!notesInitialized) {
     notesInitialized = true;
-    renderNotesShell(creds);
+    renderNotesShell();
   }
-  if (!creds.binId || !creds.key) return;
   loadNotes();
   clearInterval(notesPoll);
   notesPoll = setInterval(function () {
@@ -1041,30 +1041,9 @@ function stickyColor(id) {
   return STICKY_COLORS[h % STICKY_COLORS.length];
 }
 
-function renderNotesShell(creds) {
-  creds = creds || getJBCreds();
-  var c = document.getElementById('v-notes-content');
-  if (!creds.binId || !creds.key) {
-    c.innerHTML =
-      '<div class="wrap" style="padding-top:16px">' +
-        '<div class="notes-setup">' +
-          '<div class="notes-setup-ico">📝</div>' +
-          '<div class="notes-setup-title">Einmalige Einrichtung</div>' +
-          '<div class="notes-setup-text">Kostenlos – keine Kreditkarte nötig. Fertig in 2 Minuten.</div>' +
-          '<div class="setup-steps">' +
-            '<div class="setup-step"><strong>1.</strong> jsonbin.io öffnen → Account erstellen</div>' +
-            '<div class="setup-step"><strong>2.</strong> "+ New Bin" → <span class="setup-code">{"notes":[]}</span> → Create</div>' +
-            '<div class="setup-step"><strong>3.</strong> BIN ID aus der URL kopieren (nach <span class="setup-code">/b/</span>)</div>' +
-            '<div class="setup-step"><strong>4.</strong> Account-Icon oben rechts → Master Key kopieren</div>' +
-          '</div>' +
-          '<input class="notes-author-inp" id="setup-bin" type="text" placeholder="BIN ID (z.B. 6649…)" autocomplete="off" spellcheck="false" style="margin-top:14px">' +
-          '<input class="notes-author-inp" id="setup-key" type="password" placeholder="Master Key ($2a$10…)" autocomplete="off" spellcheck="false">' +
-          '<button class="notes-send-btn" onclick="saveJBCreds()">Verbinden</button>' +
-        '</div>' +
-      '</div>';
-    return;
-  }
+function renderNotesShell() {
   var author = escHtml(localStorage.getItem('notes-author') || '');
+  var c = document.getElementById('v-notes-content');
   c.innerHTML =
     '<div class="pinboard-wrap">' +
       '<div class="pinboard-header">' +
@@ -1072,7 +1051,6 @@ function renderNotesShell(creds) {
         '<div class="pinboard-actions">' +
           '<span class="pb-status" id="notes-status"></span>' +
           '<button class="pb-icon-btn" onclick="loadNotes()" aria-label="Aktualisieren" title="Aktualisieren">↻</button>' +
-          '<button class="pb-icon-btn" onclick="resetJBCreds()" aria-label="Einstellungen" title="Neu verbinden">⚙</button>' +
         '</div>' +
       '</div>' +
       '<div class="sticky-compose">' +
