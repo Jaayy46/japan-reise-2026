@@ -960,11 +960,9 @@ function initMap() {
 window.addEventListener('resize', function () { if (curMain === 'map') resizeMap(); });
 
 // ═══════════════════════════════════════════════════════════════
-// Notes – Firebase Realtime Database REST
+// Notes – JSONBin.io REST (kein Code-Editieren nötig)
 // ═══════════════════════════════════════════════════════════════
-// ← Deine Firebase Realtime DB URL eintragen, z.B.:
-//   'https://dein-projekt-default-rtdb.firebaseio.com'
-var FIREBASE_URL = '';
+var JB_BASE = 'https://api.jsonbin.io/v3/b/';
 
 var notesInitialized = false;
 var notesPoll = null;
@@ -975,34 +973,42 @@ function escHtml(s) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function getJBCreds() {
+  return { binId: localStorage.getItem('jb-bin') || '', key: localStorage.getItem('jb-key') || '' };
+}
+
 function initNotes() {
+  var creds = getJBCreds();
   if (!notesInitialized) {
     notesInitialized = true;
-    renderNotesShell();
+    renderNotesShell(creds);
   }
-  if (!FIREBASE_URL) return;
+  if (!creds.binId || !creds.key) return;
   loadNotes();
   clearInterval(notesPoll);
   notesPoll = setInterval(function () {
-    if (curMain === 'notes') loadNotes();
-    else clearInterval(notesPoll);
+    if (curMain === 'notes') loadNotes(); else clearInterval(notesPoll);
   }, 20000);
 }
 
-function renderNotesShell() {
+function renderNotesShell(creds) {
+  creds = creds || getJBCreds();
   var c = document.getElementById('v-notes-content');
-  if (!FIREBASE_URL) {
+  if (!creds.binId || !creds.key) {
     c.innerHTML =
       '<div class="notes-setup">' +
-        '<div class="notes-setup-ico">📡</div>' +
-        '<div class="notes-setup-title">Sync einrichten</div>' +
-        '<div class="notes-setup-text">Für geräteübergreifende Notizen braucht es eine kostenlose Firebase-Datenbank. Einmalige Einrichtung in ~5 Minuten.</div>' +
+        '<div class="notes-setup-ico">📝</div>' +
+        '<div class="notes-setup-title">Einmalige Einrichtung</div>' +
+        '<div class="notes-setup-text">Kostenloser Dienst – kein Kreditkarte nötig. Einrichtung in 2 Minuten.</div>' +
         '<div class="setup-steps">' +
-          '<div class="setup-step"><strong>1.</strong> console.firebase.google.com → Neues Projekt</div>' +
-          '<div class="setup-step"><strong>2.</strong> Realtime Database → Erstellen → Testmodus</div>' +
-          '<div class="setup-step"><strong>3.</strong> Datenbank-URL kopieren (endet auf .firebaseio.com)</div>' +
-          '<div class="setup-step"><strong>4.</strong> In index.html: <span class="setup-code">var FIREBASE_URL = \'…\'</span> eintragen</div>' +
+          '<div class="setup-step"><strong>1.</strong> jsonbin.io öffnen → kostenlosen Account erstellen</div>' +
+          '<div class="setup-step"><strong>2.</strong> "+ New Bin" klicken → <span class="setup-code">{}</span> eingeben → Create</div>' +
+          '<div class="setup-step"><strong>3.</strong> BIN ID aus der URL kopieren (der Teil nach <span class="setup-code">/b/</span>)</div>' +
+          '<div class="setup-step"><strong>4.</strong> Account-Icon → Master Key kopieren</div>' +
         '</div>' +
+        '<input class="notes-author-inp" id="setup-bin" type="text" placeholder="BIN ID (z.B. 6649…)" autocomplete="off" spellcheck="false" style="margin-top:12px">' +
+        '<input class="notes-author-inp" id="setup-key" type="password" placeholder="Master Key ($2a$10…)" autocomplete="off" spellcheck="false">' +
+        '<button class="notes-send-btn" onclick="saveJBCreds()">Verbinden</button>' +
       '</div>';
     return;
   }
@@ -1018,27 +1024,42 @@ function renderNotesShell() {
       '<div style="display:flex;align-items:center;gap:8px">' +
         '<span class="notes-status" id="notes-status"></span>' +
         '<button class="notes-refresh-btn" onclick="loadNotes()" aria-label="Aktualisieren">↻</button>' +
+        '<button class="notes-refresh-btn" onclick="resetJBCreds()" aria-label="Zurücksetzen" style="color:var(--acc)">⚙</button>' +
       '</div>' +
     '</div>' +
     '<div id="notes-list" aria-live="polite"></div>';
 }
 
+function saveJBCreds() {
+  var binId = (document.getElementById('setup-bin') || {}).value.trim();
+  var key   = (document.getElementById('setup-key') || {}).value.trim();
+  if (!binId || !key) return;
+  localStorage.setItem('jb-bin', binId);
+  localStorage.setItem('jb-key', key);
+  notesInitialized = false;
+  initNotes();
+}
+
+function resetJBCreds() {
+  localStorage.removeItem('jb-bin');
+  localStorage.removeItem('jb-key');
+  notesInitialized = false;
+  clearInterval(notesPoll);
+  renderNotesShell({ binId: '', key: '' });
+}
+
 function loadNotes() {
-  if (!FIREBASE_URL) return;
-  fetch(FIREBASE_URL + '/notes.json')
+  var creds = getJBCreds();
+  if (!creds.binId || !creds.key) return;
+  fetch(JB_BASE + creds.binId + '/latest', { headers: { 'X-Master-Key': creds.key } })
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      var notes = [];
-      if (data && typeof data === 'object') {
-        Object.keys(data).forEach(function (k) {
-          notes.push(Object.assign({ _id: k }, data[k]));
-        });
-        notes.sort(function (a, b) { return b.ts - a.ts; });
-      }
+      var notes = (data.record && Array.isArray(data.record.notes)) ? data.record.notes : [];
+      notes.sort(function (a, b) { return b.ts - a.ts; });
       var list = document.getElementById('notes-list');
+      if (!list) return;
       var myName = (document.getElementById('notes-author') || {}).value ||
                    localStorage.getItem('notes-author') || '';
-      if (!list) return;
       if (notes.length === 0) {
         list.innerHTML = '<div class="notes-empty">Noch keine Notizen – schreib die erste!</div>';
       } else {
@@ -1052,7 +1073,7 @@ function loadNotes() {
               '<span class="note-author">' + escHtml(n.author || 'Anonym') + '</span>' +
               '<div class="note-meta">' +
                 '<span class="note-time">' + ds + '</span>' +
-                (own ? '<button class="note-del" onclick="deleteNote(\'' + n._id + '\')" aria-label="Notiz löschen" title="Löschen">×</button>' : '') +
+                (own ? '<button class="note-del" onclick="deleteNote(\'' + escHtml(n.id) + '\')" aria-label="Löschen" title="Löschen">×</button>' : '') +
               '</div>' +
             '</div>' +
             '<div class="note-text">' + escHtml(n.text) + '</div>' +
@@ -1064,12 +1085,13 @@ function loadNotes() {
     })
     .catch(function () {
       var list = document.getElementById('notes-list');
-      if (list) list.innerHTML = '<div class="notes-err">Verbindungsfehler – Netz prüfen.</div>';
+      if (list) list.innerHTML = '<div class="notes-err">Verbindungsfehler – Netz oder Key prüfen.</div>';
     });
 }
 
 function addNote() {
-  if (!FIREBASE_URL) return;
+  var creds = getJBCreds();
+  if (!creds.binId || !creds.key) return;
   var authorEl = document.getElementById('notes-author');
   var textEl   = document.getElementById('notes-text');
   var author   = authorEl.value.trim();
@@ -1079,21 +1101,40 @@ function addNote() {
   localStorage.setItem('notes-author', author);
   var btn = document.querySelector('.notes-send-btn');
   btn.disabled = true;
-  fetch(FIREBASE_URL + '/notes.json', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ author: author, text: text, ts: Date.now() })
-  }).then(function () {
-    textEl.value = '';
-    btn.disabled = false;
-    if (navigator.vibrate) navigator.vibrate(40);
-    loadNotes();
-  }).catch(function () { btn.disabled = false; });
+  fetch(JB_BASE + creds.binId + '/latest', { headers: { 'X-Master-Key': creds.key } })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var notes = (data.record && Array.isArray(data.record.notes)) ? data.record.notes : [];
+      notes.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), author: author, text: text, ts: Date.now() });
+      return fetch(JB_BASE + creds.binId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': creds.key },
+        body: JSON.stringify({ notes: notes })
+      });
+    })
+    .then(function () {
+      textEl.value = '';
+      btn.disabled = false;
+      if (navigator.vibrate) navigator.vibrate(40);
+      loadNotes();
+    })
+    .catch(function () { btn.disabled = false; });
 }
 
 function deleteNote(id) {
-  if (!FIREBASE_URL) return;
-  fetch(FIREBASE_URL + '/notes/' + id + '.json', { method: 'DELETE' })
+  var creds = getJBCreds();
+  if (!creds.binId || !creds.key) return;
+  fetch(JB_BASE + creds.binId + '/latest', { headers: { 'X-Master-Key': creds.key } })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var notes = (data.record && Array.isArray(data.record.notes)) ? data.record.notes : [];
+      notes = notes.filter(function (n) { return n.id !== id; });
+      return fetch(JB_BASE + creds.binId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': creds.key },
+        body: JSON.stringify({ notes: notes })
+      });
+    })
     .then(function () { loadNotes(); });
 }
 
