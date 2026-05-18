@@ -249,7 +249,7 @@ button { touch-action: manipulation; }
 .leaflet-popup-content-wrapper { border-radius: 12px !important; box-shadow: 0 4px 24px rgba(0,0,0,.15) !important; }
 .leaflet-popup-content { margin: 12px 14px !important; font-family: -apple-system, sans-serif !important; }
 
-/* ── Notes ── */
+/* ── Notes Setup ── */
 .notes-setup { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px 18px; text-align: center; box-shadow: var(--shadow); }
 .notes-setup-ico { font-size: 48px; margin-bottom: 12px; line-height: 1; }
 .notes-setup-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
@@ -258,46 +258,94 @@ button { touch-action: manipulation; }
 .setup-step { font-size: 12px; color: var(--text2); line-height: 2.1; display: flex; gap: 8px; }
 .setup-step strong { color: var(--acc); flex-shrink: 0; }
 .setup-code { font-family: monospace; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px; font-size: 11px; color: var(--acc); }
-.notes-form { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow); }
 .notes-author-inp {
   width: 100%; background: var(--input-bg); border: 1.5px solid transparent; border-radius: 10px;
   padding: 9px 12px; font-size: 14px; color: var(--text); font-family: inherit; outline: none;
   transition: border-color .2s; min-height: 40px; margin-bottom: 8px;
 }
 .notes-author-inp:focus { border-color: var(--acc); }
-.notes-textarea {
-  width: 100%; background: var(--input-bg); border: 1.5px solid transparent; border-radius: 10px;
-  padding: 10px 12px; font-size: 14px; color: var(--text); font-family: inherit; outline: none;
-  resize: none; min-height: 80px; line-height: 1.5; transition: border-color .2s;
-}
-.notes-textarea:focus { border-color: var(--acc); }
 .notes-send-btn {
   width: 100%; background: var(--acc); color: #fff; border: none; border-radius: 10px;
   padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
   font-family: inherit; touch-action: manipulation; min-height: 44px; transition: opacity .15s;
 }
 .notes-send-btn:disabled { opacity: .45; }
-.notes-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.notes-refresh-btn {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
-  padding: 7px 13px; font-size: 12px; color: var(--text2); cursor: pointer;
-  font-family: inherit; touch-action: manipulation; min-height: 34px; transition: background .15s;
+
+/* ── Pinboard ── */
+.pinboard-wrap { padding: 14px 12px; }
+.pinboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.pinboard-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+.pinboard-actions { display: flex; gap: 8px; align-items: center; }
+.pb-icon-btn {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  width: 36px; height: 36px; cursor: pointer; font-size: 16px; display: flex;
+  align-items: center; justify-content: center; touch-action: manipulation;
+  transition: background .15s; color: var(--text2);
 }
-.notes-refresh-btn:active { background: var(--border); }
-.notes-status { font-size: 11px; color: var(--text3); }
-.note-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow-sm); transition: background .2s; }
-.note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-.note-author { font-size: 12px; font-weight: 700; color: var(--acc); }
-.note-meta { display: flex; align-items: center; gap: 6px; }
-.note-time { font-size: 11px; color: var(--text3); }
-.note-del {
-  background: none; border: none; color: var(--text4); font-size: 18px; cursor: pointer;
-  padding: 0 4px; border-radius: 6px; touch-action: manipulation; line-height: 1;
-  transition: color .15s; display: flex; align-items: center;
+.pb-icon-btn:active { background: var(--bg2); }
+.pb-status { font-size: 11px; color: var(--text3); }
+
+/* Add-note sticky */
+.sticky-compose {
+  background: #fef9c3; border-radius: 3px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.1);
+  padding: 14px 14px 12px; margin-bottom: 18px; position: relative;
 }
-.note-del:active { color: var(--acc); }
-.note-text { font-size: 14px; line-height: 1.6; color: var(--text); white-space: pre-wrap; word-break: break-word; }
-.notes-empty { text-align: center; padding: 48px 20px; color: var(--text3); font-size: 14px; }
+[data-dark] .sticky-compose { background: #3a3500; }
+.sticky-pin {
+  width: 14px; height: 14px; background: #c0392b; border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,.35); margin: -4px auto 10px;
+}
+.sticky-name-inp {
+  width: 100%; background: transparent; border: none; border-bottom: 1.5px solid rgba(0,0,0,.15);
+  padding: 4px 0 6px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,.65);
+  font-family: inherit; outline: none; margin-bottom: 10px;
+}
+[data-dark] .sticky-name-inp { color: rgba(255,255,255,.7); border-bottom-color: rgba(255,255,255,.2); }
+.sticky-name-inp::placeholder { color: rgba(0,0,0,.35); }
+[data-dark] .sticky-name-inp::placeholder { color: rgba(255,255,255,.3); }
+.sticky-textarea {
+  width: 100%; background: transparent; border: none; font-size: 14px; line-height: 1.7;
+  color: rgba(0,0,0,.75); font-family: inherit; outline: none; resize: none;
+  min-height: 72px; padding: 0;
+}
+[data-dark] .sticky-textarea { color: rgba(255,255,255,.8); }
+.sticky-textarea::placeholder { color: rgba(0,0,0,.3); }
+[data-dark] .sticky-textarea::placeholder { color: rgba(255,255,255,.3); }
+.sticky-send-btn {
+  width: 100%; background: rgba(0,0,0,.08); border: none; border-radius: 6px;
+  padding: 9px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,.6);
+  cursor: pointer; margin-top: 10px; font-family: inherit; touch-action: manipulation;
+  min-height: 40px; transition: background .15s;
+}
+[data-dark] .sticky-send-btn { background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); }
+.sticky-send-btn:disabled { opacity: .4; }
+.sticky-send-btn:active { background: rgba(0,0,0,.15); }
+
+/* Note grid */
+.notes-grid { columns: 2; column-gap: 10px; }
+.sticky-note {
+  break-inside: avoid; border-radius: 3px; padding: 12px 11px 10px;
+  box-shadow: 2px 3px 8px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.08);
+  margin-bottom: 10px; position: relative; word-break: break-word;
+  display: inline-block; width: 100%;
+}
+.sticky-note:nth-child(4n)   { transform: rotate(1.1deg);  }
+.sticky-note:nth-child(4n+1) { transform: rotate(-0.7deg); }
+.sticky-note:nth-child(4n+2) { transform: rotate(0.4deg);  }
+.sticky-note:nth-child(4n+3) { transform: rotate(-1.3deg); }
+.sticky-note-pin { width: 12px; height: 12px; background: #c0392b; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.3); margin: -2px auto 8px; }
+.sticky-note-author { font-size: 11px; font-weight: 700; color: rgba(0,0,0,.5); margin-bottom: 5px; }
+.sticky-note-text { font-size: 13px; line-height: 1.55; color: rgba(0,0,0,.78); white-space: pre-wrap; }
+.sticky-note-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.sticky-note-time { font-size: 10px; color: rgba(0,0,0,.35); }
+.sticky-note-del {
+  background: none; border: none; font-size: 16px; color: rgba(0,0,0,.25);
+  cursor: pointer; padding: 2px; touch-action: manipulation; line-height: 1;
+  transition: color .15s;
+}
+.sticky-note-del:active { color: rgba(192,57,43,.8); }
+.notes-empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
 .notes-err { text-align: center; padding: 24px 20px; color: var(--acc); font-size: 13px; }
 
 /* ── Reduced Motion ── */
@@ -991,43 +1039,58 @@ function initNotes() {
   }, 20000);
 }
 
+var STICKY_COLORS = ['#fef9c3','#fce7f3','#dbeafe','#dcfce7','#ffedd5','#ede9fe'];
+var STICKY_COLORS_DK = ['#3a3500','#3a0a20','#0a1a3a','#0a2a14','#2a1500','#1a1030'];
+
+function stickyColor(id) {
+  var h = 0;
+  for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0xffff;
+  var idx = h % STICKY_COLORS.length;
+  return document.documentElement.hasAttribute('data-dark') ? STICKY_COLORS_DK[idx] : STICKY_COLORS[idx];
+}
+
 function renderNotesShell(creds) {
   creds = creds || getJBCreds();
   var c = document.getElementById('v-notes-content');
   if (!creds.binId || !creds.key) {
     c.innerHTML =
-      '<div class="notes-setup">' +
-        '<div class="notes-setup-ico">📝</div>' +
-        '<div class="notes-setup-title">Einmalige Einrichtung</div>' +
-        '<div class="notes-setup-text">Kostenloser Dienst – kein Kreditkarte nötig. Einrichtung in 2 Minuten.</div>' +
-        '<div class="setup-steps">' +
-          '<div class="setup-step"><strong>1.</strong> jsonbin.io öffnen → kostenlosen Account erstellen</div>' +
-          '<div class="setup-step"><strong>2.</strong> "+ New Bin" klicken → <span class="setup-code">{}</span> eingeben → Create</div>' +
-          '<div class="setup-step"><strong>3.</strong> BIN ID aus der URL kopieren (der Teil nach <span class="setup-code">/b/</span>)</div>' +
-          '<div class="setup-step"><strong>4.</strong> Account-Icon → Master Key kopieren</div>' +
+      '<div class="wrap" style="padding-top:16px">' +
+        '<div class="notes-setup">' +
+          '<div class="notes-setup-ico">📝</div>' +
+          '<div class="notes-setup-title">Einmalige Einrichtung</div>' +
+          '<div class="notes-setup-text">Kostenlos – keine Kreditkarte nötig. Fertig in 2 Minuten.</div>' +
+          '<div class="setup-steps">' +
+            '<div class="setup-step"><strong>1.</strong> jsonbin.io öffnen → Account erstellen</div>' +
+            '<div class="setup-step"><strong>2.</strong> "+ New Bin" → <span class="setup-code">{"notes":[]}</span> → Create</div>' +
+            '<div class="setup-step"><strong>3.</strong> BIN ID aus der URL kopieren (nach <span class="setup-code">/b/</span>)</div>' +
+            '<div class="setup-step"><strong>4.</strong> Account-Icon oben rechts → Master Key kopieren</div>' +
+          '</div>' +
+          '<input class="notes-author-inp" id="setup-bin" type="text" placeholder="BIN ID (z.B. 6649…)" autocomplete="off" spellcheck="false" style="margin-top:14px">' +
+          '<input class="notes-author-inp" id="setup-key" type="password" placeholder="Master Key ($2a$10…)" autocomplete="off" spellcheck="false">' +
+          '<button class="notes-send-btn" onclick="saveJBCreds()">Verbinden</button>' +
         '</div>' +
-        '<input class="notes-author-inp" id="setup-bin" type="text" placeholder="BIN ID (z.B. 6649…)" autocomplete="off" spellcheck="false" style="margin-top:12px">' +
-        '<input class="notes-author-inp" id="setup-key" type="password" placeholder="Master Key ($2a$10…)" autocomplete="off" spellcheck="false">' +
-        '<button class="notes-send-btn" onclick="saveJBCreds()">Verbinden</button>' +
       '</div>';
     return;
   }
   var author = escHtml(localStorage.getItem('notes-author') || '');
   c.innerHTML =
-    '<div class="notes-form">' +
-      '<input class="notes-author-inp" id="notes-author" type="text" placeholder="Dein Name" value="' + author + '" maxlength="24" autocomplete="off" spellcheck="false">' +
-      '<textarea class="notes-textarea" id="notes-text" placeholder="Notiz schreiben…" maxlength="500" rows="3"></textarea>' +
-      '<button class="notes-send-btn" onclick="addNote()">Notiz senden</button>' +
-    '</div>' +
-    '<div class="notes-toolbar">' +
-      '<div class="sec-hd" style="margin:0">Alle Notizen</div>' +
-      '<div style="display:flex;align-items:center;gap:8px">' +
-        '<span class="notes-status" id="notes-status"></span>' +
-        '<button class="notes-refresh-btn" onclick="loadNotes()" aria-label="Aktualisieren">↻</button>' +
-        '<button class="notes-refresh-btn" onclick="resetJBCreds()" aria-label="Zurücksetzen" style="color:var(--acc)">⚙</button>' +
+    '<div class="pinboard-wrap">' +
+      '<div class="pinboard-header">' +
+        '<span class="pinboard-title">Pinboard</span>' +
+        '<div class="pinboard-actions">' +
+          '<span class="pb-status" id="notes-status"></span>' +
+          '<button class="pb-icon-btn" onclick="loadNotes()" aria-label="Aktualisieren" title="Aktualisieren">↻</button>' +
+          '<button class="pb-icon-btn" onclick="resetJBCreds()" aria-label="Einstellungen" title="Neu verbinden">⚙</button>' +
+        '</div>' +
       '</div>' +
-    '</div>' +
-    '<div id="notes-list" aria-live="polite"></div>';
+      '<div class="sticky-compose">' +
+        '<div class="sticky-pin"></div>' +
+        '<input class="sticky-name-inp" id="notes-author" type="text" placeholder="Dein Name" value="' + author + '" maxlength="24" autocomplete="off" spellcheck="false">' +
+        '<textarea class="sticky-textarea" id="notes-text" placeholder="Idee oder Notiz…" maxlength="500" rows="3"></textarea>' +
+        '<button class="sticky-send-btn" onclick="addNote()" id="notes-send-btn">Anpinnen</button>' +
+      '</div>' +
+      '<div id="notes-list" class="notes-grid" aria-live="polite"></div>' +
+    '</div>';
 }
 
 function saveJBCreds() {
@@ -1061,22 +1124,22 @@ function loadNotes() {
       var myName = (document.getElementById('notes-author') || {}).value ||
                    localStorage.getItem('notes-author') || '';
       if (notes.length === 0) {
-        list.innerHTML = '<div class="notes-empty">Noch keine Notizen – schreib die erste!</div>';
+        list.innerHTML = '<div class="notes-empty" style="grid-column:1/-1">Noch keine Notizen – sei die erste!</div>';
       } else {
         list.innerHTML = notes.map(function (n) {
           var d = new Date(n.ts);
           var ds = d.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit' }) + ' ' +
                    d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
           var own = myName && n.author === myName;
-          return '<div class="note-card">' +
-            '<div class="note-header">' +
-              '<span class="note-author">' + escHtml(n.author || 'Anonym') + '</span>' +
-              '<div class="note-meta">' +
-                '<span class="note-time">' + ds + '</span>' +
-                (own ? '<button class="note-del" onclick="deleteNote(\'' + escHtml(n.id) + '\')" aria-label="Löschen" title="Löschen">×</button>' : '') +
-              '</div>' +
+          var bg = stickyColor(n.id || String(n.ts));
+          return '<div class="sticky-note" style="background:' + bg + '">' +
+            '<div class="sticky-note-pin"></div>' +
+            '<div class="sticky-note-author">' + escHtml(n.author || 'Anonym') + '</div>' +
+            '<div class="sticky-note-text">' + escHtml(n.text) + '</div>' +
+            '<div class="sticky-note-footer">' +
+              '<span class="sticky-note-time">' + ds + '</span>' +
+              (own ? '<button class="sticky-note-del" onclick="deleteNote(\'' + escHtml(n.id) + '\')" aria-label="Löschen" title="Löschen">×</button>' : '') +
             '</div>' +
-            '<div class="note-text">' + escHtml(n.text) + '</div>' +
           '</div>';
         }).join('');
       }
@@ -1099,8 +1162,8 @@ function addNote() {
   if (!author) { authorEl.focus(); return; }
   if (!text)   { textEl.focus();   return; }
   localStorage.setItem('notes-author', author);
-  var btn = document.querySelector('.notes-send-btn');
-  btn.disabled = true;
+  var btn = document.getElementById('notes-send-btn');
+  if (btn) btn.disabled = true;
   fetch(JB_BASE + creds.binId + '/latest', { headers: { 'X-Master-Key': creds.key } })
     .then(function (r) { return r.json(); })
     .then(function (data) {
@@ -1114,11 +1177,11 @@ function addNote() {
     })
     .then(function () {
       textEl.value = '';
-      btn.disabled = false;
+      if (btn) btn.disabled = false;
       if (navigator.vibrate) navigator.vibrate(40);
       loadNotes();
     })
-    .catch(function () { btn.disabled = false; });
+    .catch(function () { if (btn) btn.disabled = false; });
 }
 
 function deleteNote(id) {
