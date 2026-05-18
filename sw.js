@@ -1,4 +1,4 @@
-var CACHE = 'japan-2026-v2';
+var CACHE = 'japan-2026-v3';
 var FILES = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', function(e) {
