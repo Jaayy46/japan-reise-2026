@@ -342,6 +342,44 @@ button { touch-action: manipulation; }
 .notes-empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
 .notes-err { text-align: center; padding: 24px 20px; color: var(--acc); font-size: 13px; }
 
+/* ── Heute Badge ── */
+.city-card.heute { border-left: 3px solid var(--acc); }
+.heute-badge { display:inline-block; background:var(--acc); color:#fff; font-size:10px; font-weight:700; border-radius:20px; padding:2px 8px; margin-left:6px; vertical-align:middle; letter-spacing:.02em; }
+
+/* ── Hero Actions (Share / Wetter) ── */
+.hero-actions { display:flex; gap:8px; padding:10px 16px 0; }
+.hero-act-btn { flex:1; background:rgba(255,255,255,.18); color:#fff; border:1px solid rgba(255,255,255,.3); border-radius:10px; padding:9px 10px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; touch-action:manipulation; min-height:40px; transition:background .15s; }
+.hero-act-btn:active { background:rgba(255,255,255,.32); }
+
+/* ── Budget Tracker ── */
+.budget-box { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-top:14px; box-shadow:var(--shadow); }
+.budget-hd { font-size:13px; font-weight:800; margin-bottom:10px; }
+.budget-add-row { display:flex; gap:6px; margin-bottom:10px; }
+.budget-lbl-inp { flex:1; background:var(--input-bg); border:1.5px solid transparent; border-radius:10px; padding:8px 10px; font-size:13px; color:var(--text); font-family:inherit; outline:none; transition:border-color .2s; min-width:0; }
+.budget-lbl-inp:focus { border-color:var(--acc); }
+.budget-amt-inp { width:72px; background:var(--input-bg); border:1.5px solid transparent; border-radius:10px; padding:8px 8px; font-size:13px; color:var(--text); font-family:inherit; outline:none; transition:border-color .2s; text-align:right; }
+.budget-amt-inp:focus { border-color:var(--acc); }
+.budget-add-btn { background:var(--acc); color:#fff; border:none; border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; cursor:pointer; touch-action:manipulation; white-space:nowrap; min-height:40px; }
+.budget-list { margin-bottom:4px; }
+.budget-row { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid var(--border); }
+.budget-row:last-child { border-bottom:none; }
+.budget-row-lbl { flex:1; font-size:13px; color:var(--text2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.budget-row-amt { font-size:13px; font-weight:700; white-space:nowrap; }
+.budget-row-del { background:none; border:none; color:var(--text3); font-size:16px; cursor:pointer; padding:0 2px; touch-action:manipulation; transition:color .15s; }
+.budget-row-del:active { color:var(--acc); }
+.budget-total-row { display:flex; justify-content:space-between; align-items:center; padding-top:8px; border-top:2px solid var(--border); margin-top:4px; }
+.budget-total-lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text3); }
+.budget-total-val { font-size:16px; font-weight:800; color:var(--acc); }
+.budget-footer { display:flex; justify-content:flex-end; margin-top:6px; }
+.budget-reset-btn { background:none; border:none; color:var(--text3); font-size:11px; cursor:pointer; text-decoration:underline; padding:0; touch-action:manipulation; }
+.budget-empty { font-size:13px; color:var(--text3); text-align:center; padding:10px 0 4px; }
+
+/* ── Phrase Favourites ── */
+.fav-btn { background:none; border:none; font-size:18px; cursor:pointer; padding:0 2px; touch-action:manipulation; line-height:1; opacity:.4; transition:opacity .15s, transform .15s; }
+.fav-btn.on { opacity:1; }
+.fav-btn:active { transform:scale(1.3); }
+.ph-cat-hd.fav-hd { border-left:3px solid #f59e0b; padding-left:8px; }
+
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
@@ -412,6 +450,22 @@ button { touch-action: manipulation; }
         <div class="quick-row" id="quick-row"></div>
       </div>
       <div class="ref-card" id="ref-card"></div>
+      <div class="budget-box">
+        <div class="budget-hd">💰 Ausgaben heute</div>
+        <div class="budget-add-row">
+          <input class="budget-lbl-inp" id="b-lbl" type="text" placeholder="Bezeichnung" maxlength="30" autocomplete="off">
+          <input class="budget-amt-inp" id="b-amt" type="number" placeholder="CHF" inputmode="decimal" min="0">
+          <button class="budget-add-btn" onclick="addBudget()" aria-label="Ausgabe hinzufügen">+</button>
+        </div>
+        <div class="budget-list" id="budget-list"></div>
+        <div class="budget-total-row">
+          <span class="budget-total-lbl">Total heute</span>
+          <span class="budget-total-val" id="budget-total">0.00 CHF</span>
+        </div>
+        <div class="budget-footer">
+          <button class="budget-reset-btn" onclick="resetBudget()">Tag zurücksetzen</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -511,7 +565,9 @@ applyDM();
   } else if (n < e) {
     var day = Math.floor((n - s) / 864e5) + 1;
     var pct = Math.round(day / 16 * 100);
-    el.innerHTML = '✈️ <strong>Tag ' + day + '</strong> von 16 – Du bist in Japan!' +
+    var cc = getCurrentCity();
+    var cityLabel = cc ? ' · <span style="opacity:.85">' + cc.e + ' ' + cc.n + '</span>' : '';
+    el.innerHTML = '✈️ <strong>Tag ' + day + '</strong> von 16' + cityLabel +
       '<div class="prog"><div class="prog-fill" style="width:' + pct + '%"></div></div>';
     el.className = 'cd act';
   } else {
@@ -624,6 +680,30 @@ var TAGS = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// Current City Detection
+// ═══════════════════════════════════════════════════════════════
+var CITY_DATES = {
+  'tokyo':     ['2026-07-20','2026-07-25'],
+  'hakone':    ['2026-07-25','2026-07-26'],
+  'fuji':      ['2026-07-26','2026-07-28'],
+  'matsumoto': ['2026-07-28','2026-07-30'],
+  'kyoto':     ['2026-07-30','2026-08-03'],
+  'osaka':     ['2026-08-03','2026-08-06']
+};
+
+function getCurrentCity() {
+  var now = new Date();
+  var keys = Object.keys(CITY_DATES);
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    if (now >= new Date(CITY_DATES[k][0]) && now < new Date(CITY_DATES[k][1])) {
+      return C.find(function (c) { return c.k === k; }) || null;
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
 // Info Cards
 // ═══════════════════════════════════════════════════════════════
 var INFO = [
@@ -689,15 +769,19 @@ function showOV() {
 // ═══════════════════════════════════════════════════════════════
 (function () {
   var el = document.getElementById('v-ov');
-  var h = '<div class="intro-banner">Tippe auf eine Stadt für Details, Sehenswürdigkeiten und Insider-Tipps.</div>';
+  var cc = getCurrentCity();
+  var h = cc
+    ? '<div class="intro-banner">✈️ Du bist heute in <strong>' + cc.n + '</strong> – tippe auf eine Stadt für Details.</div>'
+    : '<div class="intro-banner">Tippe auf eine Stadt für Details, Sehenswürdigkeiten und Insider-Tipps.</div>';
   C.forEach(function (c) {
+    var isHier = cc && cc.k === c.k;
     if (c.ti) {
       h += '<div class="transit-row"><div class="transit-line"></div><div class="transit-text">' + c.ti + '</div></div>';
     }
-    h += '<div class="city-card" onclick="openCity(\'' + c.k + '\')" role="button" tabindex="0">' +
+    h += '<div class="city-card' + (isHier ? ' heute' : '') + '" onclick="openCity(\'' + c.k + '\')" role="button" tabindex="0">' +
       '<div class="city-dot" style="background:' + c.cl + '" aria-hidden="true">' + c.e + '</div>' +
       '<div class="city-info">' +
-        '<div class="city-name">' + c.n + '</div>' +
+        '<div class="city-name">' + c.n + (isHier ? '<span class="heute-badge">Heute</span>' : '') + '</div>' +
         '<div class="city-dates">' + c.d + '</div>' +
         '<div class="city-hotel">🏨 ' + c.h + '</div>' +
       '</div>' +
@@ -726,6 +810,8 @@ function openCity(k) {
   var tin  = c.ti ? '<div class="sec"><div class="sec-hd">🚆 Anreise</div><div class="transit-card">' + c.ti + '</div></div>' : '';
   var tout = c.nt ? '<div class="sec"><div class="sec-hd">🚆 Weiterreise</div><div class="transit-card">' + c.nt + '</div></div>' : '';
 
+  var wttrCity = encodeURIComponent(c.n);
+  var canShare = !!navigator.share;
   document.getElementById('v-ci').innerHTML =
     '<button class="back-btn" onclick="showOV()" aria-label="Zurück zur Übersicht">← Übersicht</button>' +
     '<div class="city-hero" style="background:' + c.col + '">' +
@@ -734,6 +820,10 @@ function openCity(k) {
       '<div class="hero-sub">' + c.s + '</div>' +
       '<div class="hero-dates">' + c.d + ' · ' + c.ni + '</div>' +
       '<div class="hero-hotel">🏨 ' + c.h + '</div>' +
+      '<div class="hero-actions">' +
+        '<a class="hero-act-btn" href="https://wttr.in/' + wttrCity + '?lang=de" target="_blank" rel="noopener" aria-label="Wetter in ' + c.n + '">☁️ Wetter</a>' +
+        (canShare ? '<button class="hero-act-btn" onclick="shareCity(\'' + c.k + '\')" aria-label="Stadt teilen">↗ Teilen</button>' : '') +
+      '</div>' +
     '</div>' +
     tin +
     '<div class="sec"><div class="sec-hd">⭐ Sehenswürdigkeiten</div>' + att + '</div>' +
@@ -837,6 +927,22 @@ var PH = [
   ]}
 ];
 
+// ═══════════════════════════════════════════════════════════════
+// Phrase Favourites
+// ═══════════════════════════════════════════════════════════════
+var phFavs = (function () {
+  try { return JSON.parse(localStorage.getItem('ph-favs') || '[]'); } catch (e) { return []; }
+})();
+
+function isFav(jp) { return phFavs.some(function (f) { return f.jp === jp; }); }
+
+function toggleFav(de, jp, rm) {
+  var idx = phFavs.findIndex(function (f) { return f.jp === jp; });
+  if (idx >= 0) phFavs.splice(idx, 1); else phFavs.push({ de: de, jp: jp, rm: rm });
+  localStorage.setItem('ph-favs', JSON.stringify(phFavs));
+  renderPH(buildPHList(document.getElementById('search-inp').value.trim()));
+}
+
 var synth = window.speechSynthesis;
 var curBtn = null;
 
@@ -867,10 +973,13 @@ function renderPH(list) {
   if (!list.length) { el.innerHTML = '<div class="no-results">Keine Treffer – probiere einen anderen Begriff</div>'; return; }
   var html = '';
   list.forEach(function (item, idx) {
-    if (item.isHd) { html += '<div class="ph-cat-hd">' + item.cat + '</div>'; return; }
+    if (item.isHd) { html += '<div class="ph-cat-hd' + (item.isFavHd ? ' fav-hd' : '') + '">' + item.cat + '</div>'; return; }
     var id = 'ph' + idx;
     var jp = item.jp.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    var favOn = isFav(item.jp);
+    var de2 = item.de.replace(/'/g, "\\'"), rm2 = item.rm.replace(/'/g, "\\'");
     html += '<div class="ph-card" role="listitem">' +
+      '<button class="fav-btn' + (favOn ? ' on' : '') + '" onclick="toggleFav(\'' + de2 + '\',\'' + jp + '\',\'' + rm2 + '\')" aria-label="Favorit">' + (favOn ? '★' : '☆') + '</button>' +
       '<div class="ph-texts">' +
         '<div class="ph-de">' + item.de + '</div>' +
         '<div class="ph-jp">' + item.jp + '</div>' +
@@ -887,6 +996,10 @@ function renderPH(list) {
 
 function buildPHList(q) {
   var items = [];
+  if (!q && phFavs.length) {
+    items.push({ isHd: true, cat: '★ Favoriten', isFavHd: true });
+    phFavs.forEach(function (p) { items.push(p); });
+  }
   PH.forEach(function (cat) {
     var filtered = cat.ph.filter(function (p) {
       if (!q) return true;
@@ -1108,7 +1221,7 @@ function loadNotes() {
             '<div class="sticky-note-text">' + escHtml(n.text) + '</div>' +
             '<div class="sticky-note-footer">' +
               '<span class="sticky-note-time">' + ds + '</span>' +
-              (own ? '<button class="sticky-note-del" onclick="deleteNote(\'' + escHtml(n.id) + '\')" aria-label="Löschen" title="Löschen">×</button>' : '') +
+              (own ? '<button class="sticky-note-del" data-del="' + escHtml(n.id) + '" onclick="deleteNote(\'' + escHtml(n.id) + '\')" aria-label="Löschen" title="Löschen">×</button>' : '') +
             '</div>' +
           '</div>';
         }).join('');
@@ -1157,6 +1270,23 @@ function addNote() {
 function deleteNote(id) {
   var creds = getJBCreds();
   if (!creds.binId || !creds.key) return;
+  // Inline confirmation: tap once → show '?', tap again → delete
+  var btn = document.querySelector('[data-del="' + id + '"]');
+  if (btn && !btn.dataset.confirm) {
+    btn.dataset.confirm = '1';
+    btn.textContent = '?';
+    btn.style.color = '#c0392b';
+    btn.style.fontWeight = '700';
+    setTimeout(function () {
+      if (btn && btn.dataset.confirm) {
+        delete btn.dataset.confirm;
+        btn.textContent = '×';
+        btn.style.color = '';
+        btn.style.fontWeight = '';
+      }
+    }, 2500);
+    return;
+  }
   fetch(JB_BASE + creds.binId + '/latest', { headers: { 'X-Master-Key': creds.key } })
     .then(function (r) { return r.json(); })
     .then(function (data) {
@@ -1170,6 +1300,95 @@ function deleteNote(id) {
     })
     .then(function () { loadNotes(); });
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Budget Tracker
+// ═══════════════════════════════════════════════════════════════
+var BUDGET_DAY = 'budget-' + new Date().toDateString();
+
+function getBudget() {
+  try { return JSON.parse(localStorage.getItem(BUDGET_DAY) || '[]'); } catch (e) { return []; }
+}
+
+function renderBudget() {
+  var entries = getBudget();
+  var total = entries.reduce(function (s, e) { return s + e.chf; }, 0);
+  var list = document.getElementById('budget-list');
+  var totEl = document.getElementById('budget-total');
+  if (!list || !totEl) return;
+  if (!entries.length) {
+    list.innerHTML = '<div class="budget-empty">Noch keine Ausgaben heute</div>';
+  } else {
+    list.innerHTML = entries.map(function (e, i) {
+      return '<div class="budget-row">' +
+        '<span class="budget-row-lbl">' + escHtml(e.lbl) + '</span>' +
+        '<span class="budget-row-amt">' + e.chf.toFixed(2) + ' CHF</span>' +
+        '<button class="budget-row-del" onclick="delBudget(' + i + ')" aria-label="Löschen">×</button>' +
+      '</div>';
+    }).join('');
+  }
+  totEl.textContent = total.toFixed(2) + ' CHF · ' + Math.round(total * RATE).toLocaleString('de') + ' ¥';
+}
+
+function addBudget() {
+  var lbl = (document.getElementById('b-lbl').value.trim()) || 'Ausgabe';
+  var amt = parseFloat(document.getElementById('b-amt').value);
+  if (isNaN(amt) || amt <= 0) { document.getElementById('b-amt').focus(); return; }
+  var entries = getBudget();
+  entries.push({ lbl: lbl, chf: amt });
+  localStorage.setItem(BUDGET_DAY, JSON.stringify(entries));
+  document.getElementById('b-lbl').value = '';
+  document.getElementById('b-amt').value = '';
+  if (navigator.vibrate) navigator.vibrate(8);
+  renderBudget();
+}
+
+function delBudget(i) {
+  var entries = getBudget();
+  entries.splice(i, 1);
+  localStorage.setItem(BUDGET_DAY, JSON.stringify(entries));
+  renderBudget();
+}
+
+function resetBudget() {
+  localStorage.removeItem(BUDGET_DAY);
+  renderBudget();
+}
+
+renderBudget();
+
+// ═══════════════════════════════════════════════════════════════
+// Share City
+// ═══════════════════════════════════════════════════════════════
+function shareCity(k) {
+  var c = C.find(function (x) { return x.k === k; });
+  if (!c || !navigator.share) return;
+  navigator.share({
+    title: 'Japan 2026 – ' + c.n,
+    text: c.d + '\n' + c.a.slice(0, 3).map(function (a) { return '• ' + a.n; }).join('\n'),
+    url: 'https://jaayy46.github.io/japan-reise-2026/'
+  }).catch(function () {});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Swipe Navigation
+// ═══════════════════════════════════════════════════════════════
+(function () {
+  var tx = 0, ty = 0;
+  var content = document.querySelector('.content');
+  content.addEventListener('touchstart', function (e) {
+    tx = e.touches[0].clientX;
+    ty = e.touches[0].clientY;
+  }, { passive: true });
+  content.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    var idx = SECTIONS.indexOf(curMain);
+    if (dx < 0 && idx < SECTIONS.length - 1) showMain(SECTIONS[idx + 1]);
+    else if (dx > 0 && idx > 0) showMain(SECTIONS[idx - 1]);
+  }, { passive: true });
+})();
 
 // ═══════════════════════════════════════════════════════════════
 // PWA
